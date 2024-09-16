@@ -1,5 +1,7 @@
 import { Alien } from './FlyingObjects.js';
 import { Meteorite } from './FlyingObjects.js';
+import { Player } from './player.js';
+import { Planet } from './planet.js';
 
 const app = new PIXI.Application();
 
@@ -14,43 +16,21 @@ app.init({
 });
 
 function runGame(app) {
+    
     // Contenedor para todos los objetos con posición
     const container = new PIXI.Container();
-    app.stage.addChild(container);
-
-    // Posicionar el contenedor en el centro
     container.x = app.screen.width / 2;
     container.y = app.screen.height / 2;
+    app.stage.addChild(container);
 
-    // Planeta
-    const planetRadius = 50;
-    const planet = new PIXI.Graphics();
-    planet.beginFill(0x00ff00);
-    planet.drawCircle(0, 0, planetRadius);
-    planet.endFill();
-    container.addChild(planet);
-
-    // Nave principal
-    const ship = new PIXI.Graphics();
-    ship.beginFill(0xff0000);
-    ship.drawRect(-10, -5, 20, 10);
-    ship.endFill();
-    container.addChild(ship);
-
-    // Naves adicionales
-    let leftShip = null;
-    let rightShip = null;
-    let sideShipsAdded = false;
-
-    const orbitRadius = 85;
-    ship.x = orbitRadius;
-    ship.y = 0;
+    const planet = new Planet(container);
+    const player = new Player(container);
 
     let angle = 0;
     const rotationSpeed = 0.05;
 
     // Desfase angular para las naves laterales
-    const sideShipOffsetAngle = Math.PI / 11; // Dividido 11. Subiendo ese nro, quedan mas cerca
+    //const sideShipOffsetAngle = Math.PI / 11; // Dividido 11. Subiendo ese nro, quedan mas cerca
 
     // Manejo de teclas. O sea, para q lado rota
     let rotateClockwise = false;
@@ -89,10 +69,10 @@ function runGame(app) {
 
         // Agregar y quitar naves adicionales (dev, eliminar cdo esté la UI de compra de naves)
         if (e.key === 'k' || e.key === 'K') {
-            addSideShips();
+            player.createNewShip();
         }
         if (e.key === 'l' || e.key === 'L') {
-            removeSideShips();
+            player.removeSideShips();
         }
     });
 
@@ -121,14 +101,10 @@ function runGame(app) {
         }
 
         // Posicionar la nave en la órbita
-        ship.x = Math.cos(angle) * orbitRadius;
-        ship.y = Math.sin(angle) * orbitRadius;
-
-        // Apuntar la nave hacia el planeta
-        ship.rotation = angle + Math.PI / 2;
+        player.move(angle);
 
         // Actualizar la posición de las naves laterales
-        updateSideShipsPosition();
+        //player.updateSideShipsPosition(angle);
 
         updateProjectiles();
 
@@ -145,11 +121,14 @@ function runGame(app) {
     });
 
     function shootFromAllShips() {
-        shootProjectile(ship, angle);
-        if (sideShipsAdded) {
-            shootProjectile(leftShip, angle - sideShipOffsetAngle);
-            shootProjectile(rightShip, angle + sideShipOffsetAngle);
-        }
+        //shootProjectile(player.principalShip, angle);
+        player.ships.forEach(s => 
+            shootProjectile(s, s.rotation)
+        );
+        /*if (player.sideShipsAdded) {
+            shootProjectile(player.leftShip, angle - player.sideShipOffsetAngle);
+            shootProjectile(player.rightShip, angle + player.sideShipOffsetAngle);
+        }*/
     }
 
     function shootProjectile(ship, shipAngle) {
@@ -203,53 +182,6 @@ function runGame(app) {
                     break;
                 }
             }
-        }
-    }
-
-    function addSideShips() {
-        if (!sideShipsAdded) {
-            leftShip = new PIXI.Graphics();
-            leftShip.beginFill(0x0000ff);
-            leftShip.drawRect(-10, -5, 20, 10);
-            leftShip.endFill();
-            container.addChild(leftShip);
-
-            rightShip = new PIXI.Graphics();
-            rightShip.beginFill(0x0000ff);
-            rightShip.drawRect(-10, -5, 20, 10);
-            rightShip.endFill();
-            container.addChild(rightShip);
-
-            sideShipsAdded = true;
-            updateSideShipsPosition();
-        }
-    }
-
-    // Función para sacar las naves laterales
-    function removeSideShips() {
-        if (sideShipsAdded) {
-            container.removeChild(leftShip);
-            container.removeChild(rightShip);
-            leftShip = null;
-            rightShip = null;
-            sideShipsAdded = false;
-        }
-    }
-
-    // Posicionar las naves laterales en la misma órbita, pero con un desfase angular
-    function updateSideShipsPosition() {
-        if (sideShipsAdded) {
-            // Nave izquierda (desfase hacia un lado)
-            leftShip.x = Math.cos(angle - sideShipOffsetAngle) * orbitRadius;
-            leftShip.y = Math.sin(angle - sideShipOffsetAngle) * orbitRadius;
-
-            // Nave derecha (desfase hacia el otro lado)
-            rightShip.x = Math.cos(angle + sideShipOffsetAngle) * orbitRadius;
-            rightShip.y = Math.sin(angle + sideShipOffsetAngle) * orbitRadius;
-
-            // Apuntar las naves laterales hacia el planeta
-            leftShip.rotation = angle - sideShipOffsetAngle + Math.PI / 2;
-            rightShip.rotation = angle + sideShipOffsetAngle + Math.PI / 2;
         }
     }
 
