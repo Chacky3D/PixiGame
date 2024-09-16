@@ -10,10 +10,6 @@ class FlyingObject {
     }
 
     initflyingObject() {
-        this.flyingObject.beginFill(0xff00ff);
-        this.flyingObject.drawCircle(0, 0, this.radius);
-        this.flyingObject.endFill();
-
         this.flyingObject.interactive = true;
 
         this.angleToPlanet = Math.random() * Math.PI * 2;
@@ -33,13 +29,20 @@ class FlyingObject {
         this.container.removeChild(this.flyingObject);
     }
 
-    moveTowardsPlanet() {
+    move() {
         this.flyingObject.x -= Math.cos(this.angleToPlanet) * this.speed;
         this.flyingObject.y -= Math.sin(this.angleToPlanet) * this.speed;
     }
 }
 
 export class Alien extends FlyingObject {
+    initflyingObject(){
+        super.initflyingObject()
+
+        this.flyingObject.beginFill(0xff00ff);
+        this.flyingObject.drawCircle(0, 0, this.radius);
+        this.flyingObject.endFill();
+    }
     checkCollision(projectile) {
         const distX = this.flyingObject.x - projectile.x;
         const distY = this.flyingObject.y - projectile.y;
@@ -52,6 +55,11 @@ export class Alien extends FlyingObject {
 export class Meteorite extends FlyingObject {
     initflyingObject(){
         super.initflyingObject()
-        this.angleToPlanet += Math.random() * 10 - 5; // Le agrega unos grados para q no vaya hacia el planeta sino, que le pase cerca
+
+        this.flyingObject.beginFill(0xffa500);
+        this.flyingObject.drawCircle(0, 0, this.radius);
+        this.flyingObject.endFill();
+
+        this.angleToPlanet += Math.random() * 6 - 3; // Le agrega unos grados para q no vaya hacia el planeta sino, que le pase cerca
     }
 }

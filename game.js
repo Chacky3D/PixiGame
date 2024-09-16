@@ -1,4 +1,5 @@
-import { Alien } from './Alien.js';
+import { Alien } from './FlyingObjects.js';
+import { Meteorite } from './FlyingObjects.js';
 
 const app = new PIXI.Application();
 
@@ -49,7 +50,7 @@ function runGame(app) {
     const rotationSpeed = 0.05;
 
     // Desfase angular para las naves laterales
-    const sideShipOffsetAngle = Math.PI / 12; // Dividido 12. Subiendo ese nro, quedan mas cerca
+    const sideShipOffsetAngle = Math.PI / 11; // Dividido 11. Subiendo ese nro, quedan mas cerca
 
     // Manejo de teclas. O sea, para q lado rota
     let rotateClockwise = false;
@@ -66,6 +67,9 @@ function runGame(app) {
     const aliens = [];
     const alienSpeed = 0.8;  // Vel con la que los aliens se acercan al planeta
 
+    const meteorites = [];
+    const meteoriteSpeed = 1.7; // Vel con la que los meteoritos se desplazan
+
     // Event listeners para teclas
     window.addEventListener('keydown', (e) => {
         if (e.key === 'a' || e.key === 'A') {
@@ -76,13 +80,14 @@ function runGame(app) {
         }
         if (e.key === ' ') { // Si se presiona espacio
             if (!shootingInterval) {
-                shootFromAllShips();
+                shootFromAllShips(); //Para q tire uno apenas apretás el botón
                 shootingInterval = setInterval(() => {
                     shootFromAllShips()
                 }, 333);
             }
         }
-        
+
+        // Agregar y quitar naves adicionales (dev, eliminar cdo esté la UI de compra de naves)
         if (e.key === 'k' || e.key === 'K') {
             addSideShips();
         }
@@ -127,9 +132,13 @@ function runGame(app) {
 
         updateProjectiles();
 
-        // Actualizar la posición de los aliens (movimiento hacia el planeta)
+        // Actualizar la posición de los objetos voladores
         aliens.forEach(alien => {
-            alien.moveTowardsPlanet();
+            alien.move();
+        });
+
+        meteorites.forEach(meteorite => {
+            meteorite.move();
         });
 
         checkCollisions();
@@ -137,10 +146,10 @@ function runGame(app) {
 
     function shootFromAllShips() {
         shootProjectile(ship, angle);
-                    if (sideShipsAdded) {
-                        shootProjectile(leftShip, angle - sideShipOffsetAngle);
-                        shootProjectile(rightShip, angle + sideShipOffsetAngle);
-                    }
+        if (sideShipsAdded) {
+            shootProjectile(leftShip, angle - sideShipOffsetAngle);
+            shootProjectile(rightShip, angle + sideShipOffsetAngle);
+        }
     }
 
     function shootProjectile(ship, shipAngle) {
@@ -244,9 +253,15 @@ function runGame(app) {
         }
     }
 
-    // Generar aliens cada cierto tiempo (esto va por fuera del tick)
+    // Generar aliens cada cierto tiempo
     setInterval(() => {
         const alien = new Alien(container, app, alienSpeed);
         aliens.push(alien);
-    }, 1000);    
+    }, 1000);
+
+    setInterval(() => {
+        const meteorite = new Meteorite(container, app, meteoriteSpeed);
+        meteorites.push(meteorite);
+    }, 1000);
+
 }
