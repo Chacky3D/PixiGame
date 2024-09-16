@@ -1,9 +1,9 @@
-// Crear y arrancar PIXI
+import { Alien } from './FlyingObjects.js';
+import { Meteorite } from './FlyingObjects.js';
+
 const app = new PIXI.Application();
 
 app.init({
-    //width: window.innerWidth,
-    //height: window.innerHeight,
     width: 1024,
     height: 768,
     backgroundColor: 0x1099bb
@@ -13,52 +13,51 @@ app.init({
     runGame(app);
 });
 
-function runGame(app){
+function runGame(app) {
     // Contenedor para todos los objetos con posición
     const container = new PIXI.Container();
     app.stage.addChild(container);
 
     // Posicionar el contenedor en el centro
-    // Con esto, todo objeto hijo de container en x = 0 e y = 0 está en el centro de la pantalla
     container.x = app.screen.width / 2;
     container.y = app.screen.height / 2;
 
-    // Crear el planeta
+    // Planeta
     const planetRadius = 50;
     const planet = new PIXI.Graphics();
-    planet.beginFill(0x00ff00); // Empieza a pintar con verde
-    planet.drawCircle(0, 0, planetRadius); // Dibuja un círculo
-    planet.endFill(); // Deja de pintar
+    planet.beginFill(0x00ff00);
+    planet.drawCircle(0, 0, planetRadius);
+    planet.endFill();
     container.addChild(planet);
 
-    // Crear la nave principal
+    // Nave principal
     const ship = new PIXI.Graphics();
     ship.beginFill(0xff0000);
-    ship.drawRect(-10, -5, 20, 10);  // Nave rectangular
+    ship.drawRect(-10, -5, 20, 10);
     ship.endFill();
     container.addChild(ship);
 
-    // Crear variables para las naves adicionales. Después vamos a tener que manejar mejor esto, tal vez con un array para que sea dinámico.
-    // Depende de la complejidad de las naves.
+    // Naves adicionales
     let leftShip = null;
     let rightShip = null;
     let sideShipsAdded = false;
 
-    // Posicionar la nave en la órbita del planeta
-    const orbitRadius = 150; // Ver si esta distancia va a ser dinámica... creo que no
+    const orbitRadius = 85;
     ship.x = orbitRadius;
     ship.y = 0;
 
-    // Variables para la órbita de la nave
     let angle = 0;
-    const rotationSpeed = 0.05;  // Velocidad de rotación
+    const rotationSpeed = 0.05;
 
     // Desfase angular para las naves laterales
-    const sideShipOffsetAngle = Math.PI / 12; // Dividido 12 es como una por cada porción de pizza de una pizza de 12, subiendo ese nro, quedan mas cerca
+    const sideShipOffsetAngle = Math.PI / 11; // Dividido 11. Subiendo ese nro, quedan mas cerca
 
     // Manejo de teclas. O sea, para q lado rota
     let rotateClockwise = false;
     let rotateCounterClockwise = false;
+
+    // Intervalo de disparo (ráfaga de balas actual)
+    let shootingInterval = null;
 
     // Proyectiles
     const projectiles = [];
@@ -67,6 +66,9 @@ function runGame(app){
     // Aliens
     const aliens = [];
     const alienSpeed = 0.8;  // Vel con la que los aliens se acercan al planeta
+
+    const meteorites = [];
+    const meteoriteSpeed = 1.7; // Vel con la que los meteoritos se desplazan
 
     // Event listeners para teclas
     window.addEventListener('keydown', (e) => {
@@ -77,16 +79,19 @@ function runGame(app){
             rotateClockwise = true;
         }
         if (e.key === ' ') { // Si se presiona espacio
-            shootProjectile(ship, angle);
-            if (sideShipsAdded) {
-                shootProjectile(leftShip, angle - sideShipOffsetAngle);
-                shootProjectile(rightShip, angle + sideShipOffsetAngle);
+            if (!shootingInterval) {
+                shootFromAllShips(); //Para q tire uno apenas apretás el botón
+                shootingInterval = setInterval(() => {
+                    shootFromAllShips()
+                }, 333);
             }
         }
-        if (e.key === 'k' || e.key === 'K') { // Si se presiona "K"
+
+        // Agregar y quitar naves adicionales (dev, eliminar cdo esté la UI de compra de naves)
+        if (e.key === 'k' || e.key === 'K') {
             addSideShips();
         }
-        if (e.key === 'l' || e.key === 'L') { // Si se presiona "L"
+        if (e.key === 'l' || e.key === 'L') {
             removeSideShips();
         }
     });
@@ -97,6 +102,11 @@ function runGame(app){
         }
         if (e.key === 'd' || e.key === 'D') {
             rotateClockwise = false;
+        }
+        if (e.key === ' ') {
+            // Resetear tiempo de disparo
+            clearInterval(shootingInterval);
+            shootingInterval = null;
         }
     });
 
@@ -120,6 +130,48 @@ function runGame(app){
         // Actualizar la posición de las naves laterales
         updateSideShipsPosition();
 
+        updateProjectiles();
+
+        // Actualizar la posición de los objetos voladores
+        aliens.forEach(alien => {
+            alien.move();
+        });
+
+        meteorites.forEach(meteorite => {
+            meteorite.move();
+        });
+
+        checkCollisions();
+    });
+
+    function shootFromAllShips() {
+        shootProjectile(ship, angle);
+        if (sideShipsAdded) {
+            shootProjectile(leftShip, angle - sideShipOffsetAngle);
+            shootProjectile(rightShip, angle + sideShipOffsetAngle);
+        }
+    }
+
+    function shootProjectile(ship, shipAngle) {
+        const projectile = new PIXI.Graphics();
+        projectile.beginFill(0xffff00); // Color del proyectil (amarillo)
+        projectile.drawCircle(0, 0, 5); // Tamaño del proyectil
+        projectile.endFill();
+
+        projectile.x = ship.x;
+        projectile.y = ship.y;
+
+        projectile.direction = {
+            x: Math.cos(shipAngle),
+            y: Math.sin(shipAngle)
+        };
+
+        // Añadir el proyectil al contenedor y a la lista de proyectiles
+        container.addChild(projectile);
+        projectiles.push(projectile);
+    }
+
+    function updateProjectiles() {
         // Actualizar la posición de los proyectiles
         for (let i = projectiles.length - 1; i >= 0; i--) {
             const projectile = projectiles[i];
@@ -135,58 +187,41 @@ function runGame(app){
                 projectiles.splice(i, 1); // Eliminar el proyectil del array
             }
         }
-
-        // Actualizar la posición de los aliens (movimiento hacia el planeta)
-        aliens.forEach(alien => {
-            alien.x -= Math.cos(alien.angleToPlanet) * alienSpeed;
-            alien.y -= Math.sin(alien.angleToPlanet) * alienSpeed;
-        });
-
-        // Verificar colisiones entre proyectiles y aliens
-        checkCollisions();
-    });
-
-    // Función para disparar un proyectil desde una nave en su propia dirección
-    function shootProjectile(ship, shipAngle) {
-        const projectile = new PIXI.Graphics();
-        projectile.beginFill(0xffff00); // Color del proyectil (amarillo)
-        projectile.drawCircle(0, 0, 5); // Tamaño del proyectil
-        projectile.endFill();
-
-        // Posicionar el proyectil en la posición actual de la nave
-        projectile.x = ship.x;
-        projectile.y = ship.y;
-
-        // Guardar la dirección del proyectil basado en el ángulo actual de la nave
-        projectile.direction = {
-            x: Math.cos(shipAngle),
-            y: Math.sin(shipAngle)
-        };
-
-        // Añadir el proyectil al contenedor y a la lista de proyectiles
-        container.addChild(projectile);
-        projectiles.push(projectile);
     }
 
-    // Función para agregar las naves laterales
+    function checkCollisions() {
+        for (let i = aliens.length - 1; i >= 0; i--) {
+            const alien = aliens[i];
+            for (let j = projectiles.length - 1; j >= 0; j--) {
+                const projectile = projectiles[j];
+
+                if (alien.checkCollision(projectile)) {
+                    container.removeChild(projectile);
+                    projectiles.splice(j, 1);
+                    alien.destroy();
+                    aliens.splice(i, 1);
+                    break;
+                }
+            }
+        }
+    }
+
     function addSideShips() {
         if (!sideShipsAdded) {
-            // Crear la nave izquierda
             leftShip = new PIXI.Graphics();
             leftShip.beginFill(0x0000ff);
-            leftShip.drawRect(-10, -5, 20, 10);  // Nave rectangular azul
+            leftShip.drawRect(-10, -5, 20, 10);
             leftShip.endFill();
             container.addChild(leftShip);
 
-            // Crear la nave derecha
             rightShip = new PIXI.Graphics();
             rightShip.beginFill(0x0000ff);
-            rightShip.drawRect(-10, -5, 20, 10);  // Nave rectangular azul
+            rightShip.drawRect(-10, -5, 20, 10);
             rightShip.endFill();
             container.addChild(rightShip);
 
             sideShipsAdded = true;
-            updateSideShipsPosition();  // Posicionar las naves
+            updateSideShipsPosition();
         }
     }
 
@@ -218,53 +253,15 @@ function runGame(app){
         }
     }
 
-    // Función para crear un alien que aparece fuera de la pantalla y se mueve hacia el planeta
-    function spawnAlien() {
-        const alien = new PIXI.Graphics();
-        alien.beginFill(0xff00ff); // Alien color rosa
-        alien.drawCircle(0, 0, 15); // Tamaño del alien
-        alien.endFill();
-
-        // Calcular una posición aleatoria fuera de la pantalla
-        // Es interesante que la aleatoriedad de la posición hace que la entrada a la pantalla tmb sea aleatoria aunque el tiempo de invocación de esta func sea regular
-        const angleToPlanet = Math.random() * Math.PI * 2;
-        const spawnDistance = Math.max(app.screen.width, app.screen.height) / 2 + 100; // Afuera de la pantalla
-
-        alien.x = Math.cos(angleToPlanet) * spawnDistance;
-        alien.y = Math.sin(angleToPlanet) * spawnDistance;
-
-        // Guardar el ángulo hacia el planeta
-        alien.angleToPlanet = angleToPlanet;
-
-        container.addChild(alien);
+    // Generar aliens cada cierto tiempo
+    setInterval(() => {
+        const alien = new Alien(container, app, alienSpeed);
         aliens.push(alien);
-    }
+    }, 1000);
 
-    // Función para verificar colisiones entre proyectiles y aliens
-    function checkCollisions() {
-        for (let i = aliens.length - 1; i >= 0; i--) {
-            const alien = aliens[i];
-            for (let j = projectiles.length - 1; j >= 0; j--) {
-                const projectile = projectiles[j];
+    setInterval(() => {
+        const meteorite = new Meteorite(container, app, meteoriteSpeed);
+        meteorites.push(meteorite);
+    }, 1000);
 
-                // Distancia entre el alien y el proyectil
-                const distX = alien.x - projectile.x;
-                const distY = alien.y - projectile.y;
-                const distance = Math.sqrt(distX * distX + distY * distY);
-
-                // Si están lo suficientemente cerca, hay colisión
-                if (distance < 15 + 5) { // 15 es el radio del alien, 5 es el del proyectil
-                    // Eliminar alien y proyectil
-                    container.removeChild(alien);
-                    container.removeChild(projectile);
-                    aliens.splice(i, 1);
-                    projectiles.splice(j, 1);
-                    break;
-                }
-            }
-        }
-    }
-
-    // Generar aliens cada cierto tiempo (esto va por fuera del tick)
-    setInterval(spawnAlien, 1000); // Cada 1 segundo
 }
