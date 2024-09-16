@@ -122,8 +122,12 @@ function runGame(app) {
 
     function shootFromAllShips() {
         //shootProjectile(player.principalShip, angle);
+        let i = 0;
         player.ships.forEach(s => 
-            shootProjectile(s, s.rotation)
+        {
+            shootProjectile(s, angle - player.sideShipOffsetAngle * i)
+            i++;
+        }
         );
         /*if (player.sideShipsAdded) {
             shootProjectile(player.leftShip, angle - player.sideShipOffsetAngle);
