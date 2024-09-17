@@ -48,7 +48,7 @@ function runGame(app) {
     const alienSpeed = 0.8;  // Vel con la que los aliens se acercan al planeta
 
     const meteorites = [];
-    const meteoriteSpeed = 1.7; // Vel con la que los meteoritos se desplazan
+    const meteoriteSpeed = 2.3; // Vel con la que los meteoritos se desplazan
 
     // Event listeners para teclas
     window.addEventListener('keydown', (e) => {
@@ -201,6 +201,6 @@ function runGame(app) {
     setInterval(() => {
         const meteorite = new Meteorite(container, app, meteoriteSpeed);
         meteorites.push(meteorite);
-    }, 1000);
+    }, 16000);
 
 }
