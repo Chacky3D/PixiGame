@@ -1,7 +1,7 @@
 import { Alien } from './FlyingObjects.js';
 import { Meteorite } from './FlyingObjects.js';
-import { Player } from './player.js';
-import { Planet } from './planet.js';
+import { Player } from './Player.js';
+import { Planet } from './Planet.js';
 
 const app = new PIXI.Application();
 
