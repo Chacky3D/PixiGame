@@ -59,7 +59,10 @@ export class Meteorite extends FlyingObject {
         this.flyingObject.beginFill(0xffa500);
         this.flyingObject.drawCircle(0, 0, this.radius);
         this.flyingObject.endFill();
-
-        this.angleToPlanet += Math.random() * 6 - 3; // Le agrega unos grados para q no vaya hacia el planeta sino, que le pase cerca
+        
+        // Agregar unos grados random para que no vaya hacia el planeta (de -0.6 a -0.12 o de 0.12 a 0.6)
+        let randAngleIncrement = (Math.random() * (0.6 - 0.12)) + 0.12;
+        let plusOrMinus = Math.random() < 0.5 ? -1 : 1;
+        this.angleToPlanet += randAngleIncrement * plusOrMinus;
     }
 }
