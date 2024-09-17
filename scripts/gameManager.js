@@ -52,45 +52,48 @@ function runGame(app) {
 
     // Event listeners para teclas
     window.addEventListener('keydown', (e) => {
-        if (e.key === 'a' || e.key === 'A') {
-            rotateCounterClockwise = true;
-        }
-        if (e.key === 'd' || e.key === 'D') {
-            rotateClockwise = true;
-        }
-        if (e.key === ' ') { // Si se presiona espacio
-            if (!shootingInterval) {
-                shootFromAllShips(); //Para q tire uno apenas apretás el botón
-                shootingInterval = setInterval(() => {
-                    shootFromAllShips()
-                }, 333);
-            }
-        }
-
-        // Agregar y quitar naves adicionales (dev, eliminar cdo esté la UI de compra de naves)
-        if (e.key === 'k' || e.key === 'K') {
-            player.createNewShip();
-        }
-        if (e.key === 'l' || e.key === 'L') {
-            player.removeSideShips();
+        const key = e.key.toLowerCase(); // Normaliza la tecla a minúscula
+    
+        switch (key) {
+            case 'a':
+                rotateCounterClockwise = true;
+                break;
+            case 'd':
+                rotateClockwise = true;
+                break;
+            case ' ':
+                if (!shootingInterval) {
+                    shootFromAllShips(); // Dispara al presionar espacio
+                    shootingInterval = setInterval(shootFromAllShips, 333);
+                }
+                break;
+            case 'k': // Para agregar nave adicional (dev)
+                player.createNewShip();
+                break;
+            case 'l': // Para eliminar naves adicionales (dev)
+                player.removeSideShips();
+                break;
         }
     });
-
+    
     window.addEventListener('keyup', (e) => {
-        if (e.key === 'a' || e.key === 'A') {
-            rotateCounterClockwise = false;
-        }
-        if (e.key === 'd' || e.key === 'D') {
-            rotateClockwise = false;
-        }
-        if (e.key === ' ') {
-            // Resetear tiempo de disparo
-            clearInterval(shootingInterval);
-            shootingInterval = null;
+        const key = e.key.toLowerCase(); // Normaliza la tecla a minúscula
+    
+        switch (key) {
+            case 'a':
+                rotateCounterClockwise = false;
+                break;
+            case 'd':
+                rotateClockwise = false;
+                break;
+            case ' ':
+                clearInterval(shootingInterval); // Resetea el intervalo de disparo
+                shootingInterval = null;
+                break;
         }
     });
 
-    // Loop del juego (el Update)
+     // Loop del juego (el Update)
     app.ticker.add(() => {
         // Actualizar el ángulo dependiendo de la tecla presionada
         if (rotateCounterClockwise) {
