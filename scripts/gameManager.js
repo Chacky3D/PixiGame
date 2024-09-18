@@ -42,6 +42,7 @@ function runGame(app) {
     // Proyectiles
     const projectiles = [];
     const projectileSpeed = 2;  // Vel de los proyectiles
+    const proyectileRadius = 5;
 
     // Aliens
     const aliens = [];
@@ -49,6 +50,8 @@ function runGame(app) {
 
     const meteorites = [];
     const meteoriteSpeed = 2.3; // Vel con la que los meteoritos se desplazan
+
+    let frames = 0;
 
     // Event listeners para teclas
     window.addEventListener('keydown', (e) => {
@@ -95,6 +98,8 @@ function runGame(app) {
 
      // Loop del juego (el Update)
     app.ticker.add(() => {
+        //console.log(`FPS actual: ${app.ticker.FPS}`);
+
         // Actualizar el ángulo dependiendo de la tecla presionada
         if (rotateCounterClockwise) {
             angle -= rotationSpeed;
@@ -119,8 +124,26 @@ function runGame(app) {
         meteorites.forEach(meteorite => {
             meteorite.move();
         });
+        
+        frames += 1;
+        
+        if (frames % 2 == 0){
+            checkCollisions();
+        }
+        
+        // Invocar Aliens y meteoritos
+        //Cada 1s
+        if (frames % 60 == 0){
+            const alien = new Alien(container, app, alienSpeed);
+            aliens.push(alien);
+        }
 
-        checkCollisions();
+        //Cada 16s
+        if (frames % 960 == 0){
+            const meteorite = new Meteorite(container, app, meteoriteSpeed);
+            meteorites.push(meteorite);
+        }
+
     });
 
     function shootFromAllShips() {
@@ -138,10 +161,10 @@ function runGame(app) {
         }*/
     }
 
-    function shootProjectile(ship, shipAngle) {
+    function shootProjectile(ship, shipAngle) {        
         const projectile = new PIXI.Graphics();
         projectile.beginFill(0xffff00); // Color del proyectil (amarillo)
-        projectile.drawCircle(0, 0, 5); // Tamaño del proyectil
+        projectile.drawCircle(0, 0, proyectileRadius); // Tamaño del proyectil
         projectile.endFill();
 
         projectile.x = ship.x;
@@ -191,16 +214,5 @@ function runGame(app) {
             }
         }
     }
-
-    // Generar aliens cada cierto tiempo
-    setInterval(() => {
-        const alien = new Alien(container, app, alienSpeed);
-        aliens.push(alien);
-    }, 1000);
-
-    setInterval(() => {
-        const meteorite = new Meteorite(container, app, meteoriteSpeed);
-        meteorites.push(meteorite);
-    }, 16000);
 
 }

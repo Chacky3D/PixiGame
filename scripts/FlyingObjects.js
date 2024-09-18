@@ -48,7 +48,7 @@ export class Alien extends FlyingObject {
         const distY = this.flyingObject.y - projectile.y;
         const distance = Math.sqrt(distX * distX + distY * distY);
 
-        return distance < this.radius + 5;  // 5 es el radio del proyectil
+        return distance < this.radius + 5;  // Cambiar ese +5 por el proyectileRadius de la clase proyectil
     }
 }
 
