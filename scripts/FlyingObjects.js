@@ -61,11 +61,11 @@ export class Alien extends FlyingObject
 
     checkCollision(projectile) 
     {
-        const distX = this.flyingObject.x - projectile.x;
-        const distY = this.flyingObject.y - projectile.y;
+        const distX = this.flyingObject.x - projectile.projectile.x;
+        const distY = this.flyingObject.y - projectile.projectile.y;
         const distance = Math.sqrt(distX * distX + distY * distY);
 
-        return distance < this.radius + 5;  // Cambiar ese +5 por el proyectileRadius de la clase proyectil
+        return distance < this.radius + projectile.radius;
     }
 }
 
