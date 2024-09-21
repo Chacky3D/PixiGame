@@ -1,8 +1,9 @@
-import { container } from './GameManager.js';
+import { container, angle, projectiles } from './GameManager.js';
+import { Projectile } from './Projectile.js';
 
 export class Player
 {
-    
+
     constructor()
     {
         this.pricipalShip;
@@ -36,7 +37,8 @@ export class Player
         }
     }
 
-    removeSideShips() {
+    removeSideShips() 
+    {
         if(this.ships.length > 1)
         {
             container.removeChild(this.ships[this.ships.length - 1]);
@@ -44,7 +46,7 @@ export class Player
         }
     }
 
-    move(angle)
+    move()
     {
         let i = 0;
             this.ships.forEach(s => 
@@ -54,6 +56,16 @@ export class Player
                 s.rotation = angle - this.sideShipOffsetAngle * i + Math.PI / 2;
                 i++;
             });
+    }
+
+    shoot()
+    {
+        let i = 0;
+        this.ships.forEach(s => 
+        {
+            projectiles.push(new Projectile(s, angle - this.sideShipOffsetAngle * i));
+            i++;
+        })
     }
 
 }

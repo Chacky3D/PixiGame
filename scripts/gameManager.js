@@ -5,6 +5,9 @@ import { Planet } from './Planet.js';
 
 export const app = new PIXI.Application();
 export const container = new PIXI.Container();
+export const projectiles = [];
+export let angle = 0;
+const rotationSpeed = 0.05;
 
 app.init({
     width: 1024,
@@ -30,8 +33,7 @@ function runGame(app) {
     const planet = new Planet(container);
     const player = new Player(container);
 
-    let angle = 0;
-    const rotationSpeed = 0.05;
+    //const rotationSpeed = 0.05;
 
     // Manejo de teclas. O sea, para q lado rota
     let rotateClockwise = false;
@@ -40,22 +42,16 @@ function runGame(app) {
     // Intervalo de disparo (ráfaga de balas actual)
     let shootingInterval = null;
 
-    // Proyectiles
-    const projectiles = [];
-    const projectileSpeed = 2;  // Vel de los proyectiles
-    const proyectileRadius = 5;
-
-    // Aliens
+    // Objects
     const aliens = [];
-
     const meteorites = [];
 
     let frames = 0;
 
     // Event listeners para teclas
-    window.addEventListener('keydown', (e) => {
+    window.addEventListener('keydown', (e) => 
+    {
         const key = e.key.toLowerCase(); // Normaliza la tecla a minúscula
-    
         switch (key) 
         {
             case 'a':
@@ -69,8 +65,8 @@ function runGame(app) {
             case ' ':
                 if (!shootingInterval) 
                 {
-                    shootFromAllShips(); // Dispara al presionar espacio
-                    shootingInterval = setInterval(shootFromAllShips, 333);
+                    player.shoot(); // Dispara al presionar espacio
+                    shootingInterval = setInterval(player.shoot.bind(player), 333);
                 }
                 break;
 
@@ -105,27 +101,32 @@ function runGame(app) {
     });
 
      // Loop del juego (el Update)
-    app.ticker.add(() => {
+    app.ticker.add(() => 
+    {
         //console.log(`FPS actual: ${app.ticker.FPS}`);
 
         // Actualizar el ángulo dependiendo de la tecla presionada
-        if (rotateCounterClockwise) {
+        if (rotateCounterClockwise) 
+        {
             angle -= rotationSpeed;
         }
-        if (rotateClockwise) {
+        if (rotateClockwise) 
+        {
             angle += rotationSpeed;
         }
 
         player.move(angle);
 
-        updateProjectiles();
+        projectiles.forEach(p => p.move());
 
         // Actualizar la posición de los objetos voladores
-        aliens.forEach(alien => {
+        aliens.forEach(alien => 
+        {
             alien.move();
         });
 
-        meteorites.forEach(meteorite => {
+        meteorites.forEach(meteorite => 
+        {
             meteorite.move();
         });
         
@@ -153,66 +154,17 @@ function runGame(app) {
 
     });
 
-    function shootFromAllShips() 
+    function checkCollisions() 
     {
-        let i = 0;
-        player.ships.forEach(s => 
-        {
-            shootProjectile(s, angle - player.sideShipOffsetAngle * i)
-            i++;
-        });
-    }
-
-    function shootProjectile(ship, shipAngle) 
-    {        
-        const projectile = new PIXI.Graphics();
-        projectile.beginFill(0xffff00); // Color del proyectil (amarillo)
-        projectile.drawCircle(0, 0, proyectileRadius); // Tamaño del proyectil
-        projectile.endFill();
-
-        projectile.x = ship.x;
-        projectile.y = ship.y;
-
-        projectile.direction = {
-            x: Math.cos(shipAngle),
-            y: Math.sin(shipAngle)
-        };
-
-        // Añadir el proyectil al contenedor y a la lista de proyectiles
-        container.addChild(projectile);
-        projectiles.push(projectile);
-    }
-
-    function updateProjectiles() {
-        // Actualizar la posición de los proyectiles
-        for (let i = projectiles.length - 1; i >= 0; i--) {
-            const projectile = projectiles[i];
-
-            // Mover el proyectil en su dirección
-            projectile.x += projectile.direction.x * projectileSpeed;
-            projectile.y += projectile.direction.y * projectileSpeed;
-
-            // Si el proyectil sale de los límites de la pantalla, eliminarlo
-            if (projectile.x < -container.x || projectile.x > app.screen.width - container.x ||
-                projectile.y < -container.y || projectile.y > app.screen.height - container.y) {
-                container.removeChild(projectile);
-                projectiles.splice(i, 1); // Eliminar el proyectil del array
-            }
-        }
-    }
-
-    function checkCollisions() {
         for (let i = aliens.length - 1; i >= 0; i--) 
         {
             const alien = aliens[i];
             for (let j = projectiles.length - 1; j >= 0; j--) 
             {
                 const projectile = projectiles[j];
-
                 if (alien.checkCollision(projectile)) 
                 {
-                    container.removeChild(projectile);
-                    projectiles.splice(j, 1);
+                    projectile.destroy();
                     alien.destroy();
                     aliens.splice(i, 1);
                     break;
