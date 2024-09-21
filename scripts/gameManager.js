@@ -3,7 +3,8 @@ import { Meteorite } from './FlyingObjects.js';
 import { Player } from './Player.js';
 import { Planet } from './Planet.js';
 
-const app = new PIXI.Application();
+export const app = new PIXI.Application();
+export const container = new PIXI.Container();
 
 app.init({
     width: 1024,
@@ -12,25 +13,25 @@ app.init({
 }).then(() => {
     document.body.appendChild(app.view);
 
+    initContainer();
+
     runGame(app);
 });
 
-function runGame(app) {
-    
-    // Contenedor para todos los objetos con posición
-    const container = new PIXI.Container();
+function initContainer()
+{
     container.x = app.screen.width / 2;
     container.y = app.screen.height / 2;
     app.stage.addChild(container);
+}
+
+function runGame(app) {
 
     const planet = new Planet(container);
     const player = new Player(container);
 
     let angle = 0;
     const rotationSpeed = 0.05;
-
-    // Desfase angular para las naves laterales
-    //const sideShipOffsetAngle = Math.PI / 11; // Dividido 11. Subiendo ese nro, quedan mas cerca
 
     // Manejo de teclas. O sea, para q lado rota
     let rotateClockwise = false;
@@ -46,10 +47,8 @@ function runGame(app) {
 
     // Aliens
     const aliens = [];
-    const alienSpeed = 0.8;  // Vel con la que los aliens se acercan al planeta
 
     const meteorites = [];
-    const meteoriteSpeed = 2.3; // Vel con la que los meteoritos se desplazan
 
     let frames = 0;
 
@@ -57,22 +56,28 @@ function runGame(app) {
     window.addEventListener('keydown', (e) => {
         const key = e.key.toLowerCase(); // Normaliza la tecla a minúscula
     
-        switch (key) {
+        switch (key) 
+        {
             case 'a':
                 rotateCounterClockwise = true;
                 break;
+
             case 'd':
                 rotateClockwise = true;
                 break;
+
             case ' ':
-                if (!shootingInterval) {
+                if (!shootingInterval) 
+                {
                     shootFromAllShips(); // Dispara al presionar espacio
                     shootingInterval = setInterval(shootFromAllShips, 333);
                 }
                 break;
+
             case 'k': // Para agregar nave adicional (dev)
                 player.createNewShip();
                 break;
+
             case 'l': // Para eliminar naves adicionales (dev)
                 player.removeSideShips();
                 break;
@@ -82,13 +87,16 @@ function runGame(app) {
     window.addEventListener('keyup', (e) => {
         const key = e.key.toLowerCase(); // Normaliza la tecla a minúscula
     
-        switch (key) {
+        switch (key) 
+        {
             case 'a':
                 rotateCounterClockwise = false;
                 break;
+
             case 'd':
                 rotateClockwise = false;
                 break;
+                
             case ' ':
                 clearInterval(shootingInterval); // Resetea el intervalo de disparo
                 shootingInterval = null;
@@ -108,11 +116,7 @@ function runGame(app) {
             angle += rotationSpeed;
         }
 
-        // Posicionar la nave en la órbita
         player.move(angle);
-
-        // Actualizar la posición de las naves laterales
-        //player.updateSideShipsPosition(angle);
 
         updateProjectiles();
 
@@ -127,41 +131,40 @@ function runGame(app) {
         
         frames += 1;
         
-        if (frames % 2 == 0){
+        if (frames % 2 == 0)
+        {
             checkCollisions();
         }
         
         // Invocar Aliens y meteoritos
         //Cada 1s
-        if (frames % 60 == 0){
-            const alien = new Alien(container, app, alienSpeed);
+        if (frames % 60 == 0)
+        {
+            const alien = new Alien();
             aliens.push(alien);
         }
 
         //Cada 16s
-        if (frames % 960 == 0){
-            const meteorite = new Meteorite(container, app, meteoriteSpeed);
+        if (frames % 960 == 0)
+        {
+            const meteorite = new Meteorite();
             meteorites.push(meteorite);
         }
 
     });
 
-    function shootFromAllShips() {
-        //shootProjectile(player.principalShip, angle);
+    function shootFromAllShips() 
+    {
         let i = 0;
         player.ships.forEach(s => 
         {
             shootProjectile(s, angle - player.sideShipOffsetAngle * i)
             i++;
-        }
-        );
-        /*if (player.sideShipsAdded) {
-            shootProjectile(player.leftShip, angle - player.sideShipOffsetAngle);
-            shootProjectile(player.rightShip, angle + player.sideShipOffsetAngle);
-        }*/
+        });
     }
 
-    function shootProjectile(ship, shipAngle) {        
+    function shootProjectile(ship, shipAngle) 
+    {        
         const projectile = new PIXI.Graphics();
         projectile.beginFill(0xffff00); // Color del proyectil (amarillo)
         projectile.drawCircle(0, 0, proyectileRadius); // Tamaño del proyectil
@@ -199,12 +202,15 @@ function runGame(app) {
     }
 
     function checkCollisions() {
-        for (let i = aliens.length - 1; i >= 0; i--) {
+        for (let i = aliens.length - 1; i >= 0; i--) 
+        {
             const alien = aliens[i];
-            for (let j = projectiles.length - 1; j >= 0; j--) {
+            for (let j = projectiles.length - 1; j >= 0; j--) 
+            {
                 const projectile = projectiles[j];
 
-                if (alien.checkCollision(projectile)) {
+                if (alien.checkCollision(projectile)) 
+                {
                     container.removeChild(projectile);
                     projectiles.splice(j, 1);
                     alien.destroy();

@@ -1,10 +1,12 @@
+import { container } from './GameManager.js';
+
 export class Player
 {
-    constructor(container)
+    
+    constructor()
     {
         this.pricipalShip;
         this.orbitRadius = 85;
-        this.container = container;
         this.ships = [];
         this.sideShipOffsetAngle = Math.PI / 6;
         this.maxAmountOfShips = 12;
@@ -30,14 +32,14 @@ export class Player
             newShip.rotation = 0 + Math.PI / 2;
 
             this.ships.push(newShip);
-            this.container.addChild(newShip);
-            }
+            container.addChild(newShip);
+        }
     }
 
     removeSideShips() {
         if(this.ships.length > 1)
         {
-            this.container.removeChild(this.ships[this.ships.length - 1]);
+            container.removeChild(this.ships[this.ships.length - 1]);
             this.ships.pop();
         }
     }
@@ -51,8 +53,7 @@ export class Player
                 s.y = Math.sin(angle - this.sideShipOffsetAngle * i) * this.orbitRadius;
                 s.rotation = angle - this.sideShipOffsetAngle * i + Math.PI / 2;
                 i++;
-            }
-            );
+            });
     }
 
 }
