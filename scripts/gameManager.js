@@ -10,9 +10,10 @@ export const app = new PIXI.Application();
 export const container = new PIXI.Container();
 export const projectiles = [];
 export let angle = 0;
-export const creditManager = new CreditManager();
-export const scoreManager = new ScoreManager();
-export const hud = new HUD();
+export let creditManager;
+export let scoreManager;
+let hud;
+
 const rotationSpeed = 0.05;
 
 app.init({
@@ -38,6 +39,9 @@ function runGame(app) {
 
     const planet = new Planet(container);
     const player = new Player(container);
+    creditManager = new CreditManager();
+    scoreManager = new ScoreManager();
+    hud = new HUD();
 
     // Manejo de teclas
     let rotateClockwise = false;
