@@ -1,4 +1,4 @@
-import { container, app } from './GameManager.js';
+import { container, app, scoreManager, creditManager } from './GameManager.js';
 
 class FlyingObject 
 {
@@ -59,6 +59,12 @@ export class Alien extends FlyingObject
         this.flyingObject.endFill();
     }
 
+    destroy() 
+    {
+        super.destroy()
+        scoreManager.addScore(10);
+    }
+
     checkCollision(projectile) 
     {
         const distX = this.flyingObject.x - projectile.projectile.x;
@@ -91,4 +97,10 @@ export class Meteorite extends FlyingObject
         this.angleToPlanet += randAngleIncrement * plusOrMinus;
     }
     
+    destroy() 
+    {
+        super.destroy()
+        creditManager.addCredits(1);
+        scoreManager.addScore(25);
+    }
 }
