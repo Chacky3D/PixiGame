@@ -2,11 +2,18 @@ import { Alien } from './FlyingObjects.js';
 import { Meteorite } from './FlyingObjects.js';
 import { Player } from './Player.js';
 import { Planet } from './Planet.js';
+import { CreditManager } from './CreditManager.js';
+import { ScoreManager } from './ScoreManager.js';
+import { HUD } from './Hud.js';
 
 export const app = new PIXI.Application();
 export const container = new PIXI.Container();
 export const projectiles = [];
 export let angle = 0;
+export let creditManager;
+export let scoreManager;
+let hud;
+
 const rotationSpeed = 0.05;
 
 app.init({
@@ -32,10 +39,11 @@ function runGame(app) {
 
     const planet = new Planet(container);
     const player = new Player(container);
+    creditManager = new CreditManager();
+    scoreManager = new ScoreManager();
+    hud = new HUD();
 
-    //const rotationSpeed = 0.05;
-
-    // Manejo de teclas. O sea, para q lado rota
+    // Manejo de teclas
     let rotateClockwise = false;
     let rotateCounterClockwise = false;
 
@@ -135,6 +143,11 @@ function runGame(app) {
         if (frames % 2 == 0)
         {
             checkCollisions();
+        }
+
+        if (frames % 8 == 0)
+        {
+            hud.updateHUD();
         }
         
         // Invocar Aliens y meteoritos
