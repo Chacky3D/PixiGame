@@ -6,6 +6,7 @@ import { CreditManager } from './CreditManager.js';
 import { ScoreManager } from './ScoreManager.js';
 import { HUD } from './Hud.js';
 import { GameInput } from './GameInput.js';
+import { Animatable } from './Animatable.js';
 
 export const app = new PIXI.Application();
 export const container = new PIXI.Container();
@@ -51,7 +52,7 @@ function runGame(app) {
     app.ticker.add(() => 
     {
         //console.log(`FPS actual: ${app.ticker.FPS}`);
-
+        
         // Actualizar el ángulo dependiendo de la tecla presionada
         if (gameInput.rotateCounterClockwise) 
         {
@@ -79,7 +80,7 @@ function runGame(app) {
         {
             hud.updateHUD();
         }
-        
+
         // Invocar Aliens y meteoritos
         //Cada 1s
         if (frames % 60 == 0)
