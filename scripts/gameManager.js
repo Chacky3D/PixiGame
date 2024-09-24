@@ -6,7 +6,6 @@ import { CreditManager } from './CreditManager.js';
 import { ScoreManager } from './ScoreManager.js';
 import { HUD } from './Hud.js';
 import { GameInput } from './GameInput.js';
-import { Animatable } from './Animatable.js';
 
 export const app = new PIXI.Application();
 export const container = new PIXI.Container();

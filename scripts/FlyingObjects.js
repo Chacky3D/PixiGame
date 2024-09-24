@@ -1,29 +1,81 @@
 import { container, app, scoreManager, creditManager } from './GameManager.js';
-import { Animatable } from './Animatable.js';
 
-class FlyingObject extends Animatable
+class FlyingObject 
 {
 
     constructor() 
     {
-        super();
-
         this.speed;
-
-        this.animationSpeed = 0.8;
-        this.spritePath = 'sprites/alien.json'
-        this.spriteWidth = 50;
-        this.spriteHeight = 30;
-        this.radius = 15;
-
-        this.loadSpriteSheet();
+        this.animatedSprites = {};
+        this.currentAnimatedSprite;
+        this.animationSpeed;
+        this.spritePath ;
+        this.spriteWidth;
+        this.spriteHeight;
+        
     }
 
+    //Carga el spritesheet del objeto basado en el "spritePath".
     async loadSpriteSheet()
     {
-        await super.loadSpriteSheet();
+        await PIXI.Assets.load(this.spritePath).then(sheet => this.createAnimationsFrom(sheet));
         this.initflyingObject();
         this.setupClickListener();
+    }
+
+    //Crea un set de animaciones en base a lo descripto en el "spritePath" e iniciliza la animacion "mooving".
+    createAnimationsFrom(sheet)
+    {
+        this.animatedSprites = 
+        {
+            'none' : new PIXI.AnimatedSprite(sheet.animations['none']),
+            'mooving' : new PIXI.AnimatedSprite(sheet.animations['mooving']),
+            'beHarmed' : new PIXI.AnimatedSprite(sheet.animations['beHarmed']),
+            'vfx' : new PIXI.AnimatedSprite(sheet.animations['vfx']),
+        }
+
+        const animatedSpritesValue = Object.values(this.animatedSprites);
+        animatedSpritesValue.forEach(s => this.prepareToBeUsed(s));
+
+        this.play('mooving');
+    }
+
+    //Setea los valores correpondientes al tamaño del sprite.
+    prepareToBeUsed(animatedSprite)
+    {
+        animatedSprite.width = this.spriteWidth;
+        animatedSprite.height = this.spriteHeight;
+        animatedSprite.anchor = (0.5, 0.5);
+        animatedSprite.animationSpeed = this.animationSpeed;
+    }
+
+    //Ejecuta una animación perteneciente a dicionario "animatedSprites".
+    play(animationKey)
+    {
+        this.currentAnimatedSprite = this.animatedSprites[animationKey];
+        container.addChild(this.currentAnimatedSprite);
+        this.currentAnimatedSprite.play();
+    }
+
+    //Para la animación que se está ejecutando actualmente.
+    stop()
+    {
+        this.currentAnimatedSprite.stop();
+    }
+
+    //Cambia la animación actual por la que recibe por parámetro.
+    changeAnimation(animationKey)
+    {
+        container.removeChild(this.currentAnimatedSprite);
+        this.currentAnimatedSprite = this.animatedSprites[animationKey];
+        container.addChild(this.currentAnimatedSprite);
+        this.currentAnimatedSprite.play();
+    }
+
+    //Cambia la velocidad de la animación.
+    changeAnimationSpeed(speed)
+    {
+        this.currentAnimatedSprite.animationSpeed = speed;
     }
 
     initflyingObject() 
@@ -62,6 +114,12 @@ export class Alien extends FlyingObject
     {
         super();
         this.speed = 0.8;
+        this.radius = 15;
+        this.animationSpeed = 0.5;
+        this.spritePath = 'sprites/alien.json';
+        this.spriteWidth = 64;
+        this.spriteHeight = 32;
+        this.loadSpriteSheet();
     }
 
     destroy() 
@@ -86,6 +144,11 @@ export class Meteorite extends FlyingObject
     {
         super();
         this.speed = 2.3;
+        this.animationSpeed = 0.5;
+        this.spritePath = 'sprites/moon.json';
+        this.spriteWidth = 50;
+        this.spriteHeight = 50;
+        this.loadSpriteSheet();
     }
     
     destroy() 
