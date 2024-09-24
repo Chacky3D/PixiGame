@@ -1,19 +1,21 @@
 import { container } from './GameManager.js';
+import { Animatable } from './Animatable.js';
 
-export class Planet
+export class Planet extends Animatable
 {
     constructor()
     {
-        this.planet = new PIXI.Graphics();
-        this.planetRadius = 50;
-        this.initPlanet();
+        super();
+        this.animationSpeed = 0.5;
+        this.spritePath = 'sprites/moon.json'
+        this.spriteWidth = 100;
+        this.spriteHeight = 100;
+        this.loadSpriteSheet();
     }
 
-    initPlanet()
+    async loadSpriteSheet()
     {
-        this.planet.beginFill(0x00ff00);
-        this.planet.drawCircle(0, 0, this.planetRadius);
-        this.planet.endFill();
-        container.addChild(this.planet);
+        await super.loadSpriteSheet();
+        //console.log(this.currentAnimatedSprite);
     }
 }
