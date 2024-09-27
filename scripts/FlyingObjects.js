@@ -103,6 +103,7 @@ class FlyingObject
 
     move() 
     {
+        if (!this.currentAnimatedSprite) return;
         this.currentAnimatedSprite.x -= Math.cos(this.angleToPlanet) * this.speed;
         this.currentAnimatedSprite.y -= Math.sin(this.angleToPlanet) * this.speed;
     }
