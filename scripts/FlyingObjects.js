@@ -157,4 +157,14 @@ export class Meteorite extends FlyingObject
         creditManager.addCredits(1);
         scoreManager.addScore(25);
     }
+
+    initflyingObject() 
+    {
+        super.initflyingObject()
+
+        // Agregar unos grados random para que no vaya hacia el planeta (de -0.6 a -0.13 o de 0.13 a 0.6)
+        let randAngleIncrement = (Math.random() * (0.6 - 0.13)) + 0.13;
+        let plusOrMinus = Math.random() < 0.5 ? -1 : 1;
+        this.angleToPlanet += randAngleIncrement * plusOrMinus;
+    }
 }
