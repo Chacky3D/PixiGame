@@ -5,6 +5,7 @@ class FlyingObject
 
     constructor() 
     {
+        this.flyingObjectContainer = new PIXI.Container(); 
         this.speed;
         this.animatedSprites = {};
         this.currentAnimatedSprite;
@@ -53,7 +54,7 @@ class FlyingObject
     play(animationKey)
     {
         this.currentAnimatedSprite = this.animatedSprites[animationKey];
-        container.addChild(this.currentAnimatedSprite);
+        this.flyingObjectContainer.addChild(this.currentAnimatedSprite);
         this.currentAnimatedSprite.play();
     }
 
@@ -68,7 +69,7 @@ class FlyingObject
     {
         container.removeChild(this.currentAnimatedSprite);
         this.currentAnimatedSprite = this.animatedSprites[animationKey];
-        container.addChild(this.currentAnimatedSprite);
+        container.addChild(this.flyingObjectContainer);
         this.currentAnimatedSprite.play();
     }
 
@@ -85,10 +86,10 @@ class FlyingObject
         this.angleToPlanet = Math.random() * Math.PI * 2;
         const spawnDistance = Math.max(app.screen.width, app.screen.height) / 2 + 100;
 
-        this.currentAnimatedSprite.x = Math.cos(this.angleToPlanet) * spawnDistance;
-        this.currentAnimatedSprite.y = Math.sin(this.angleToPlanet) * spawnDistance;
+        this.flyingObjectContainer.x = Math.cos(this.angleToPlanet) * spawnDistance;
+        this.flyingObjectContainer.y = Math.sin(this.angleToPlanet) * spawnDistance;
 
-        container.addChild(this.currentAnimatedSprite);
+        container.addChild(this.flyingObjectContainer);
     }
 
     setupClickListener() 
@@ -98,14 +99,13 @@ class FlyingObject
 
     destroy() 
     {
-        container.removeChild(this.currentAnimatedSprite);
+        container.removeChild(this.flyingObjectContainer);
     }
 
     move() 
     {
-        if (!this.currentAnimatedSprite) return;
-        this.currentAnimatedSprite.x -= Math.cos(this.angleToPlanet) * this.speed;
-        this.currentAnimatedSprite.y -= Math.sin(this.angleToPlanet) * this.speed;
+        this.flyingObjectContainer.x -= Math.cos(this.angleToPlanet) * this.speed;
+        this.flyingObjectContainer.y -= Math.sin(this.angleToPlanet) * this.speed;
     }
 }
 
@@ -131,8 +131,8 @@ export class Alien extends FlyingObject
 
     checkCollision(projectile) 
     {
-        const distX = this.currentAnimatedSprite.x - projectile.projectile.x;
-        const distY = this.currentAnimatedSprite.y - projectile.projectile.y;
+        const distX = this.flyingObjectContainer.x - projectile.projectile.x;
+        const distY = this.flyingObjectContainer.y - projectile.projectile.y;
         const distance = Math.sqrt(distX * distX + distY * distY);
 
         return distance < this.radius + projectile.radius;
