@@ -10,6 +10,7 @@ export class Planet
         this.spritePath = 'sprites/moon.json';
         this.spriteWidth = 100;
         this.spriteHeight = 100;
+        this.life = 10; // Vida inicial
         this.loadSpriteSheet();
     }
 
@@ -68,9 +69,26 @@ export class Planet
         this.currentAnimatedSprite.play();
     }
 
+    
+    changeAnimationSpeed(speed){
     //Cambia la velocidad de la animación.
-    changeAnimationSpeed(speed)
-    {
         this.currentAnimatedSprite.animationSpeed = speed;
     }
+
+    destroy(){
+    //Elimina el planeta.
+        container.removeChild(this.currentAnimatedSprite);
+    }
+
+    takeDamage(){
+    //Resta vida del planeta y lo destruye si llega la vida a 0.
+        this.life -= 1;
+        if (this.life <= 0) { this.destroy();} 
+    }
+
+
+
+
+
+
 }
