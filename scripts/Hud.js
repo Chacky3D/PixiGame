@@ -1,4 +1,4 @@
-import { app, scoreManager, creditManager } from './GameManager.js';
+import { app, scoreManager, creditManager, gameInput } from './GameManager.js';
 
 export class HUD
 {
@@ -6,6 +6,7 @@ export class HUD
     {
         this.onscreenScore = 0;
         this.onscreenCredits = 0;
+        this.hold = '';
 
         // Contenedor para el HUD:
         this.hudContainer = new PIXI.Container();
@@ -31,16 +32,29 @@ export class HUD
         this.creditsText.x = app.screen.width - 20;
         this.creditsText.y = 20;
 
+        this.holdText = new PIXI.Text('NO', {
+            fontFamily: 'Arial',
+            fontSize: 24,
+            fill: 0xffffff,
+            align: 'center'
+        });
+        this.holdText.anchor.set(0.5, 1);
+        this.holdText.x = app.screen.width / 2;
+        this.holdText.y = app.screen.height - 20;
+
         this.hudContainer.addChild(this.scoreText);
         this.hudContainer.addChild(this.creditsText);
+        this.hudContainer.addChild(this.holdText);
     }
 
     updateHUD()
     {
         this.onscreenScore = scoreManager.score;
         this.onscreenCredits = creditManager.credits;
+        this.hold = gameInput.holdingShoot;
 
         this.scoreText.text = `Score: ${this.onscreenScore}`;
         this.creditsText.text = `${this.onscreenCredits} Cr.`;
+        this.holdText.text = this.hold ? 'HOLD' : '';
     }
 }

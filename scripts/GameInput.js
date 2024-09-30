@@ -1,4 +1,5 @@
 import { player } from "./GameManager.js";
+import { frames } from "./GameManager.js";
 
 export class GameInput
 {
@@ -6,8 +7,10 @@ export class GameInput
     {
         this.rotateClockwise = false;
         this.rotateCounterClockwise = false;
-        this.shootingInterval = null;
         this.listenForEvents();
+        this.shooting = false;
+        this.holdingShoot = false;
+        this.actualFramesStartShooting = 0;
 
     }
 
@@ -27,18 +30,22 @@ export class GameInput
                         break;
         
                     case ' ':
-                        if (!this.shootingInterval) 
+                        if (!this.shooting) 
                         {
                             player.shoot();
-                            this.shootingInterval = setInterval(player.shoot.bind(player), 333);
+                            this.actualFramesStartShooting = frames;
+                            this.shooting = true;
+                            this.holdingShoot = false;
                         }
                         break;
                     
                     case 'shift':
-                        if (!this.shootingInterval) 
                         {
-                            player.shoot();
-                            this.shootingInterval = setInterval(player.shoot.bind(player), 333);
+                            this.holdingShoot = !this.holdingShoot;
+                        }
+                        if (!this.shooting)
+                        {
+                            this.actualFramesStartShooting = frames;
                         }
                         break;
         
@@ -66,12 +73,11 @@ export class GameInput
                         break;
                         
                     case ' ':
-                        clearInterval(this.shootingInterval); // Resetea el intervalo de disparo
-                        this.shootingInterval = null;
+                        this.shooting = false;
                         break;
                 }
             });
-
+            /*
             document.addEventListener("visibilitychange", () => {
                 if (document.hidden)
                 {
@@ -79,7 +85,7 @@ export class GameInput
                     this.shootingInterval = null;
                     console.log("something");
                 }
-            });
+            });*/
     }
     
 }

@@ -18,13 +18,13 @@ export const scoreManager = new ScoreManager();
 export let angle = 0;
 
 const planet = new Planet();
-const gameInput = new GameInput();
+export const gameInput = new GameInput();
 const background = new Background();
 const aliens = [];
 const meteorites = [];
 const rotationSpeed = 0.05;
 
-let frames = 0;
+export let frames = 0;
 let hud;
 
 
@@ -95,6 +95,10 @@ function runGame(app) {
         {
             const meteorite = new Meteorite();
             meteorites.push(meteorite);
+        }
+
+        if ((frames - gameInput.actualFramesStartShooting) % 20 == 0 && (gameInput.shooting || gameInput.holdingShoot)){
+            player.shoot();
         }
 
     });
