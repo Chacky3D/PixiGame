@@ -33,6 +33,14 @@ export class GameInput
                             this.shootingInterval = setInterval(player.shoot.bind(player), 333);
                         }
                         break;
+                    
+                    case 'shift':
+                        if (!this.shootingInterval) 
+                        {
+                            player.shoot();
+                            this.shootingInterval = setInterval(player.shoot.bind(player), 333);
+                        }
+                        break;
         
                     case 'k':
                         player.createNewShip();
@@ -61,6 +69,15 @@ export class GameInput
                         clearInterval(this.shootingInterval); // Resetea el intervalo de disparo
                         this.shootingInterval = null;
                         break;
+                }
+            });
+
+            document.addEventListener("visibilitychange", () => {
+                if (document.hidden)
+                {
+                    clearInterval(this.shootingInterval);
+                    this.shootingInterval = null;
+                    console.log("something");
                 }
             });
     }

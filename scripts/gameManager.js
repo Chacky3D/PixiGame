@@ -6,6 +6,7 @@ import { CreditManager } from './CreditManager.js';
 import { ScoreManager } from './ScoreManager.js';
 import { HUD } from './Hud.js';
 import { GameInput } from './GameInput.js';
+import { Background } from './Background.js';
 
 export const app = new PIXI.Application();
 export const container = new PIXI.Container();
@@ -18,6 +19,7 @@ export let angle = 0;
 
 const planet = new Planet();
 const gameInput = new GameInput();
+const background = new Background();
 const aliens = [];
 const meteorites = [];
 const rotationSpeed = 0.05;
