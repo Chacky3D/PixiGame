@@ -5,7 +5,8 @@ export class ScoreManager
         this.score = 0;
     }
     
-    addScore(scoreToAdd) {
-        this.score += scoreToAdd;
+    addScore(amount)
+    {
+        this.score += amount;
     }
 }

@@ -5,7 +5,15 @@ export class CreditManager
         this.credits = 0;
     }
     
-    addCredits(creditsToAdd) {
-        this.credits += creditsToAdd;
+    addCredits(amount)
+    {
+        this.credits += amount;
+    }
+
+    removeCredits(amount)
+    {
+        if (this.credits >= amount) {
+            this.credits -= amount;
+        }
     }
 }
