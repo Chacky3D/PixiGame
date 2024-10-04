@@ -1,4 +1,4 @@
-import { player } from "./GameManager.js";
+import { player, hud } from "./GameManager.js";
 import { frames } from "./GameManager.js";
 
 export class GameInput
@@ -11,6 +11,7 @@ export class GameInput
         this.shooting = false;
         this.holdingShoot = false;
         this.actualFramesStartShooting = 0;
+        this.buyMenuVisible = false;
 
     }
 
@@ -56,6 +57,10 @@ export class GameInput
                     case 'l':
                         player.removeSideShips();
                         break;
+                    case 'control':
+                            this.buyMenuVisible = !this.buyMenuVisible; // Alternar el estado
+                            hud.toggleBuyShipButton(this.buyMenuVisible); // Mostrar u ocultar el botón
+                            break;
                 }
             });
             

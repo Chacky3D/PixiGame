@@ -14,6 +14,7 @@ export const projectiles = [];
 export const player = new Player();
 export const creditManager = new CreditManager();
 export const scoreManager = new ScoreManager();
+export let hud;
 
 export let angle = 0;
 
@@ -25,7 +26,6 @@ const meteorites = [];
 const rotationSpeed = 0.05;
 
 export let frames = 0;
-let hud;
 
 
 app.init({
