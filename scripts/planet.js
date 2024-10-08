@@ -10,7 +10,7 @@ export class Planet
         this.spritePath = 'sprites/moon.json';
         this.spriteWidth = 100;
         this.spriteHeight = 100;
-        this.life = 10; // Vida inicial
+        this.life = 10; // Vida del planeta
         this.loadSpriteSheet();
     }
 

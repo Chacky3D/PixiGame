@@ -1,5 +1,4 @@
-import { player, hud } from "./GameManager.js";
-import { frames } from "./GameManager.js";
+import { player, hud, frames, creditManager } from "./GameManager.js";
 
 export class GameInput
 {
@@ -34,7 +33,7 @@ export class GameInput
                         if (!this.shooting) 
                         {
                             player.shoot();
-                            this.actualFramesStartShooting = frames;
+                            this.setActualFramesStartShooting();
                             this.shooting = true;
                             this.holdingShoot = false;
                         }
@@ -46,10 +45,17 @@ export class GameInput
                         }
                         if (!this.shooting)
                         {
-                            this.actualFramesStartShooting = frames;
+                            this.setActualFramesStartShooting();
                         }
                         break;
         
+                    case 'control':
+                        this.buyMenuVisible = !this.buyMenuVisible;
+                        hud.toggleBuyShipButton(this.buyMenuVisible);
+                        hud.toggleBuyFiringRateButton(this.buyMenuVisible);
+                        break;
+
+                    //DEBUG: borrar:
                     case 'k':
                         player.createNewShip();
                         break;
@@ -57,10 +63,9 @@ export class GameInput
                     case 'l':
                         player.removeSideShips();
                         break;
-                    case 'control':
-                            this.buyMenuVisible = !this.buyMenuVisible; // Alternar el estado
-                            hud.toggleBuyShipButton(this.buyMenuVisible); // Mostrar u ocultar el botón
-                            break;
+                    
+                    case 'p':
+                        creditManager.addCredits(20);
                 }
             });
             
@@ -93,4 +98,13 @@ export class GameInput
             });*/
     }
     
+    setActualFramesStartShooting()
+    {
+        this.actualFramesStartShooting = frames;
+    }
+
+    setBuyMenuVisible(value)
+    {
+        this.buyMenuVisible = value;
+    }
 }
