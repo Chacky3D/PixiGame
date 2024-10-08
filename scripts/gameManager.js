@@ -12,13 +12,13 @@ export const app = new PIXI.Application();
 export const container = new PIXI.Container();
 export const projectiles = [];
 export const player = new Player();
+export const planet = new Planet();
 export const creditManager = new CreditManager();
 export const scoreManager = new ScoreManager();
 export let hud;
 
 export let angle = 0;
 
-const planet = new Planet();
 export const gameInput = new GameInput();
 const background = new Background();
 const aliens = [];
@@ -26,7 +26,7 @@ const meteorites = [];
 const rotationSpeed = 0.05;
 
 export let frames = 0;
-
+export let framesShootInterval = 20;
 
 app.init({
     width: 1024,
@@ -97,7 +97,7 @@ function runGame(app) {
             meteorites.push(meteorite);
         }
 
-        if ((frames - gameInput.actualFramesStartShooting) % 20 == 0 && (gameInput.shooting || gameInput.holdingShoot)){
+        if ((frames - gameInput.actualFramesStartShooting) % framesShootInterval == 0 && (gameInput.shooting || gameInput.holdingShoot)){
             player.shoot();
         }
 
@@ -121,5 +121,9 @@ function runGame(app) {
             }
         }
     }
+}
 
+export function setFiringRate(value)
+{
+    framesShootInterval = value;
 }
