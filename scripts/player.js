@@ -1,5 +1,6 @@
 import { container, angle, projectiles } from './GameManager.js';
 import { Projectile } from './Projectile.js';
+import { Ship } from './Ship.js';
 
 export class Player
 {
@@ -20,30 +21,28 @@ export class Player
         this.pricipalShip = this.ships[0];
     }
 
-    createNewShip()
+    async createNewShip()
     {
         if(this.ships.length < this.maxAmountOfShips)
         {
-            const newShip = new PIXI.Graphics();
-            newShip.beginFill(0x0000ff);
-            newShip.drawRect(-10, -5, 20, 10);
-            newShip.endFill();
-            newShip.x = Math.cos(0) * this.orbitRadius;
-            newShip.y = Math.sin(0) * this.orbitRadius;
-            newShip.rotation = 0 + Math.PI / 2;
+            const newShip = new Ship();
+            await newShip.loadSpriteSheet();
+            newShip.currentAnimatedSprite.x = Math.cos(0) * this.orbitRadius;
+            newShip.currentAnimatedSprite.y = Math.sin(0) * this.orbitRadius;
+            newShip.currentAnimatedSprite.rotation = 0 + Math.PI / 2;
 
             this.ships.push(newShip);
-            container.addChild(newShip);
         }
     }
 
     removeSideShips() 
     {
-        if(this.ships.length > 1)
+        /*if(this.ships.length > 1)
         {
             container.removeChild(this.ships[this.ships.length - 1]);
             this.ships.pop();
-        }
+        }*/
+       console.log("You can't remove side ships anymore.");
     }
 
     move()
@@ -51,9 +50,9 @@ export class Player
         let i = 0;
             this.ships.forEach(s => 
             {
-                s.x = Math.cos(angle - this.sideShipOffsetAngle * i) * this.orbitRadius;
-                s.y = Math.sin(angle - this.sideShipOffsetAngle * i) * this.orbitRadius;
-                s.rotation = angle - this.sideShipOffsetAngle * i + Math.PI / 2;
+                s.currentAnimatedSprite.x = Math.cos(angle - this.sideShipOffsetAngle * i) * this.orbitRadius;
+                s.currentAnimatedSprite.y = Math.sin(angle - this.sideShipOffsetAngle * i) * this.orbitRadius;
+                s.currentAnimatedSprite.rotation = angle - this.sideShipOffsetAngle * i + Math.PI / 2;
                 i++;
             });
     }
@@ -63,7 +62,7 @@ export class Player
         let i = 0;
         this.ships.forEach(s => 
         {
-            projectiles.push(new Projectile(s, angle - this.sideShipOffsetAngle * i));
+            projectiles.push(new Projectile(s.currentAnimatedSprite, angle - this.sideShipOffsetAngle * i));
             i++;
         })
     }
