@@ -1,4 +1,4 @@
-import { player } from "./GameManager.js";
+import { player, hud, frames, creditManager } from "./GameManager.js";
 
 export class GameInput
 {
@@ -6,8 +6,11 @@ export class GameInput
     {
         this.rotateClockwise = false;
         this.rotateCounterClockwise = false;
-        this.shootingInterval = null;
         this.listenForEvents();
+        this.shooting = false;
+        this.holdingShoot = false;
+        this.actualFramesStartShooting = 0;
+        this.buyMenuVisible = false;
 
     }
 
@@ -27,13 +30,32 @@ export class GameInput
                         break;
         
                     case ' ':
-                        if (!this.shootingInterval) 
+                        if (!this.shooting) 
                         {
                             player.shoot();
-                            this.shootingInterval = setInterval(player.shoot.bind(player), 333);
+                            this.setActualFramesStartShooting();
+                            this.shooting = true;
+                            this.holdingShoot = false;
+                        }
+                        break;
+                    
+                    case 'shift':
+                        {
+                            this.holdingShoot = !this.holdingShoot;
+                        }
+                        if (!this.shooting)
+                        {
+                            this.setActualFramesStartShooting();
                         }
                         break;
         
+                    case 'control':
+                        this.buyMenuVisible = !this.buyMenuVisible;
+                        hud.toggleBuyShipButton(this.buyMenuVisible);
+                        hud.toggleBuyFiringRateButton(this.buyMenuVisible);
+                        break;
+
+                    //DEBUG: borrar:
                     case 'k':
                         player.createNewShip();
                         break;
@@ -41,6 +63,9 @@ export class GameInput
                     case 'l':
                         player.removeSideShips();
                         break;
+                    
+                    case 'p':
+                        creditManager.addCredits(20);
                 }
             });
             
@@ -58,11 +83,28 @@ export class GameInput
                         break;
                         
                     case ' ':
-                        clearInterval(this.shootingInterval); // Resetea el intervalo de disparo
-                        this.shootingInterval = null;
+                        this.shooting = false;
                         break;
                 }
             });
+            /*
+            document.addEventListener("visibilitychange", () => {
+                if (document.hidden)
+                {
+                    clearInterval(this.shootingInterval);
+                    this.shootingInterval = null;
+                    console.log("something");
+                }
+            });*/
     }
     
+    setActualFramesStartShooting()
+    {
+        this.actualFramesStartShooting = frames;
+    }
+
+    setBuyMenuVisible(value)
+    {
+        this.buyMenuVisible = value;
+    }
 }

@@ -6,25 +6,27 @@ import { CreditManager } from './CreditManager.js';
 import { ScoreManager } from './ScoreManager.js';
 import { HUD } from './Hud.js';
 import { GameInput } from './GameInput.js';
+import { Background } from './Background.js';
 
 export const app = new PIXI.Application();
 export const container = new PIXI.Container();
 export const projectiles = [];
 export const player = new Player();
+export const planet = new Planet();
 export const creditManager = new CreditManager();
 export const scoreManager = new ScoreManager();
+export let hud;
 
 export let angle = 0;
 
-const planet = new Planet();
-const gameInput = new GameInput();
+export const gameInput = new GameInput();
+const background = new Background();
 const aliens = [];
 const meteorites = [];
 const rotationSpeed = 0.05;
 
-let frames = 0;
-let hud;
-
+export let frames = 0;
+export let framesShootInterval = 20;
 
 app.init({
     width: 1024,
@@ -95,6 +97,10 @@ function runGame(app) {
             meteorites.push(meteorite);
         }
 
+        if ((frames - gameInput.actualFramesStartShooting) % framesShootInterval == 0 && (gameInput.shooting || gameInput.holdingShoot)){
+            player.shoot();
+        }
+
     });
 
     function checkCollisions() 
@@ -115,5 +121,9 @@ function runGame(app) {
             }
         }
     }
+}
 
+export function setFiringRate(value)
+{
+    framesShootInterval = value;
 }
