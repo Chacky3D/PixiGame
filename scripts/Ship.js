@@ -1,27 +1,26 @@
-import { container } from './GameManager.js';
+import { container } from "./GameManager.js";
 
-export class Planet
+export class Ship
 {
+
     constructor()
     {
-        this.animatedSprites = {};
         this.currentAnimatedSprite;
-        this.animationSpeed = 0.2;
-        this.spritePath = 'sprites/star.json';
-        this.spriteWidth = 128;
-        this.spriteHeight = 128;
-        this.life = 10; // Vida del planeta
-        this.loadSpriteSheet();
+        this.animationSpeed = 0.3;
+        this.spritePath = 'sprites/player_ship.json';
+        this.spriteWidth = 32;
+        this.spriteHeight = 32;
+        //this.loadSpriteSheet();
     }
 
     //Carga el spritesheet del objeto basado en el "spritePath".
     async loadSpriteSheet()
     {
-        await PIXI.Assets.load(this.spritePath).then(sheet => this.initAnimationsLoad(sheet));
+        await PIXI.Assets.load(this.spritePath).then(sheet => this.createAnimationsFrom(sheet));
     }
 
     //Crea un set de animaciones en base a lo descripto en el "spritePath" e iniciliza la animacion "mooving".
-    initAnimationsLoad(sheet)
+    createAnimationsFrom(sheet)
     {
         this.animatedSprites = 
         {
@@ -69,26 +68,10 @@ export class Planet
         this.currentAnimatedSprite.play();
     }
 
-    
-    changeAnimationSpeed(speed){
     //Cambia la velocidad de la animación.
+    changeAnimationSpeed(speed)
+    {
         this.currentAnimatedSprite.animationSpeed = speed;
     }
-
-    destroy(){
-    //Elimina el planeta.
-        container.removeChild(this.currentAnimatedSprite);
-    }
-
-    takeDamage(){
-    //Resta vida del planeta y lo destruye si llega la vida a 0.
-        this.life -= 1;
-        if (this.life <= 0) { this.destroy();} 
-    }
-
-
-
-
-
 
 }

@@ -10,7 +10,7 @@ class FlyingObject
         this.animatedSprites = {};
         this.currentAnimatedSprite;
         this.animationSpeed;
-        this.spritePath ;
+        this.spritePath;
         this.spriteWidth;
         this.spriteHeight;
         
@@ -67,9 +67,9 @@ class FlyingObject
     //Cambia la animación actual por la que recibe por parámetro.
     changeAnimation(animationKey)
     {
-        container.removeChild(this.currentAnimatedSprite);
+        this.flyingObjectContainer.removeChild(this.currentAnimatedSprite);
         this.currentAnimatedSprite = this.animatedSprites[animationKey];
-        container.addChild(this.flyingObjectContainer);
+        this.flyingObjectContainer.addChild(this.currentAnimatedSprite);
         this.currentAnimatedSprite.play();
     }
 
@@ -116,10 +116,10 @@ export class Alien extends FlyingObject
         super();
         this.speed = 0.8;
         this.radius = 15;
-        this.animationSpeed = 0.5;
-        this.spritePath = 'sprites/alien.json';
-        this.spriteWidth = 64;
-        this.spriteHeight = 32;
+        this.animationSpeed = 0.3;
+        this.spritePath = 'sprites/normal_ship.json';
+        this.spriteWidth = 48;
+        this.spriteHeight = 48;
         this.loadSpriteSheet();
     }
 
@@ -145,10 +145,10 @@ export class Meteorite extends FlyingObject
     {
         super();
         this.speed = 2.3;
-        this.animationSpeed = 0.5;
-        this.spritePath = 'sprites/moon.json';
-        this.spriteWidth = 50;
-        this.spriteHeight = 50;
+        this.animationSpeed = 0.3;
+        this.spritePath = 'sprites/asteroid.json';
+        this.spriteWidth = 48;
+        this.spriteHeight = 48;
         this.loadSpriteSheet();
     }
     
