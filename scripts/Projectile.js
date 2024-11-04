@@ -15,7 +15,7 @@ export class Projectile
         this.spritePath = 'sprites/projectile.json';
         this.spriteWidth = 16;
         this.spriteHeight = 16;
-        this.canMove = false;
+        this.isLoaded = false;
         this.loadSpriteSheet();
     }
 
@@ -24,7 +24,7 @@ export class Projectile
     {
         await PIXI.Assets.load(this.spritePath).then(sheet => this.initAnimationsLoad(sheet));
         this.initProjectile(this.ship, this.shipAngle);
-        this.canMove = true;
+        this.isLoaded = true;
     }
 
     //Crea un set de animaciones en base a lo descripto en el "spritePath" e iniciliza la animacion "mooving".
@@ -102,7 +102,7 @@ export class Projectile
 
     move()
     {
-        if(this.canMove)
+        if(this.isLoaded)
         {
             this.projectile.x += this.projectile.direction.x * this.speed;
             this.projectile.y += this.projectile.direction.y * this.speed;
