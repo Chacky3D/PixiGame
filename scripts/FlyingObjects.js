@@ -111,13 +111,13 @@ class FlyingObject
 
 export class Alien extends FlyingObject 
 {
-    constructor()
+    constructor(path = null)
     {
         super();
         this.speed = 0.8;
         this.radius = 15;
         this.animationSpeed = 0.3;
-        this.spritePath = 'sprites/normal_ship.json';
+        this.spritePath = path == null ? 'sprites/normal_ship.json' : path;
         this.spriteWidth = 48;
         this.spriteHeight = 48;
         this.loadSpriteSheet();
@@ -147,9 +147,7 @@ export class TeleportingAlien extends Alien
 {
     constructor() 
     {
-        super();
-        this.spritePath = 'sprites/normal_ship.json';
-        this.flyingObjectContainer.tint = 0x00FF00;
+        super('sprites/doge_ship.json');
         this.proyectileDistanceThreshold = 50;
     }
 
