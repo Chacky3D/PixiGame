@@ -130,12 +130,57 @@ export class Alien extends FlyingObject
     }
 
     checkCollision(projectile) 
-    {
+    {   
+        if (!projectile.isLoaded) return false;
+
         const distX = this.flyingObjectContainer.x - projectile.projectile.x;
         const distY = this.flyingObjectContainer.y - projectile.projectile.y;
         const distance = Math.sqrt(distX * distX + distY * distY);
 
         return distance < this.radius + projectile.radius;
+    }
+
+    checkProximityAndTeleport(projectile){}
+}
+
+export class TeleportingAlien extends Alien 
+{
+    constructor() 
+    {
+        super();
+        this.spritePath = 'sprites/normal_ship.json';
+        this.flyingObjectContainer.tint = 0x00FF00;
+        this.proyectileDistanceThreshold = 50;
+    }
+
+    checkCollision(projectile) {return false;}
+
+    checkProximityAndTeleport(projectile)
+    {
+        if (!projectile.isLoaded) return false;
+
+        const distX = this.flyingObjectContainer.x - projectile.projectile.x;
+        const distY = this.flyingObjectContainer.y - projectile.projectile.y;
+        const distance = Math.sqrt(distX * distX + distY * distY);
+
+        if (distance < this.proyectileDistanceThreshold) 
+        {
+            this.teleport();
+        }
+    }
+
+    // Método para cambiar de ángulo (manteniendo la distancia radial)
+    teleport() 
+    {
+    const dx = this.flyingObjectContainer.x;
+    const dy = this.flyingObjectContainer.y;
+    const currentDistanceToPlanet = Math.sqrt(dx * dx + dy * dy);
+
+    const angleOffset = (Math.random() - 0.5) * Math.PI; // Cambia a un ángulo aleatorio
+    this.angleToPlanet += angleOffset;
+
+    this.flyingObjectContainer.x = Math.cos(this.angleToPlanet) * currentDistanceToPlanet;
+    this.flyingObjectContainer.y = Math.sin(this.angleToPlanet) * currentDistanceToPlanet;
     }
 }
 

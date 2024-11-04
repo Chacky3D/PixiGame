@@ -1,4 +1,5 @@
 import { Alien } from './FlyingObjects.js';
+import { TeleportingAlien } from './FlyingObjects.js';
 import { Meteorite } from './FlyingObjects.js';
 import { Player } from './Player.js';
 import { Planet } from './Planet.js';
@@ -90,6 +91,13 @@ function runGame(app) {
             aliens.push(alien);
         }
 
+        //Cada 10s
+        if (frames % 600 == 0)
+        {
+            const alien = new TeleportingAlien();
+            aliens.push(alien);
+        }
+
         //Cada 16s
         if (frames % 960 == 0)
         {
@@ -118,6 +126,7 @@ function runGame(app) {
                     aliens.splice(i, 1);
                     break;
                 }
+                alien.checkProximityAndTeleport(projectile);
             }
         }
     }
