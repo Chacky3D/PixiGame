@@ -1,26 +1,29 @@
 import { container } from "./GameManager.js";
 
-export class Ship
+export class Explosion
 {
-
-    constructor()
+    constructor(x, y)
     {
+        this.x = x;
+        this.y = y;
+        this.animatedSprites = {};
         this.currentAnimatedSprite;
-        this.animationSpeed = 0.3;
-        this.spritePath = 'sprites/player_ship.json';
-        this.spriteWidth = 32;
-        this.spriteHeight = 32;
-        //this.loadSpriteSheet();
+        this.animationSpeed = 0.2;
+        this.spritePath = 'sprites/explosion.json';
+        this.spriteWidth = 48;
+        this.spriteHeight = 48;
+        this.loadSpriteSheet();
+        console.log(this.x);
     }
 
     //Carga el spritesheet del objeto basado en el "spritePath".
     async loadSpriteSheet()
     {
-        await PIXI.Assets.load(this.spritePath).then(sheet => this.createAnimationsFrom(sheet));
+        await PIXI.Assets.load(this.spritePath).then(sheet => this.initAnimationsLoad(sheet));
     }
 
     //Crea un set de animaciones en base a lo descripto en el "spritePath" e iniciliza la animacion "mooving".
-    createAnimationsFrom(sheet)
+    initAnimationsLoad(sheet)
     {
         this.animatedSprites = 
         {
@@ -43,6 +46,8 @@ export class Ship
         animatedSprite.height = this.spriteHeight;
         animatedSprite.anchor = (0.5, 0.5);
         animatedSprite.animationSpeed = this.animationSpeed;
+        animatedSprite.x = this.x;
+        animatedSprite.y = this.y;
     }
 
     //Ejecuta una animación perteneciente a dicionario "animatedSprites".
@@ -51,6 +56,7 @@ export class Ship
         this.currentAnimatedSprite = this.animatedSprites[animationKey];
         container.addChild(this.currentAnimatedSprite);
         this.currentAnimatedSprite.play();
+        setTimeout(this.destroy.bind(this), 580);
     }
 
     //Para la animación que se está ejecutando actualmente.
@@ -68,15 +74,14 @@ export class Ship
         this.currentAnimatedSprite.play();
     }
 
+    
     //Cambia la velocidad de la animación.
-    changeAnimationSpeed(speed)
-    {
+    changeAnimationSpeed(speed){
         this.currentAnimatedSprite.animationSpeed = speed;
     }
 
     destroy()
     {
-        container.removeChild(this.currentAnimatedSprite);
+        container.removeChild(this.currentAnimatedSprite)
     }
-
 }

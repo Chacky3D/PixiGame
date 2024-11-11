@@ -37,12 +37,11 @@ export class Player
 
     removeSideShips() 
     {
-        /*if(this.ships.length > 1)
+        if(this.ships.length > 1)
         {
-            container.removeChild(this.ships[this.ships.length - 1]);
+            this.ships[this.ships.length - 1].destroy();
             this.ships.pop();
-        }*/
-       console.log("You can't remove side ships anymore.");
+        }
     }
 
     move()

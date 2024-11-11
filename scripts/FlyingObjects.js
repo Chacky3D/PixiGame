@@ -1,4 +1,5 @@
 import { container, app, scoreManager, creditManager } from './GameManager.js';
+import { Explosion } from './Explosion.js';
 
 class FlyingObject 
 {
@@ -99,6 +100,7 @@ class FlyingObject
 
     destroy() 
     {
+        new Explosion(this.flyingObjectContainer.x, this.flyingObjectContainer.y);
         container.removeChild(this.flyingObjectContainer);
     }
 
@@ -197,7 +199,7 @@ export class Meteorite extends FlyingObject
     
     destroy() 
     {
-        super.destroy()
+        container.removeChild(this.flyingObjectContainer);
         creditManager.addCredits(1);
         scoreManager.addScore(25);
     }
