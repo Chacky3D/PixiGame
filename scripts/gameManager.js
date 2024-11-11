@@ -110,7 +110,7 @@ function runGame(app) {
                 if (alien.checkCollision(projectile)) {
                     projectile.destroy();
                     alien.destroy();
-                    aliens.splice(i, 1);
+                    spliceFlyingObject(projectile);
                     break;
                 }
                 alien.checkProximityAndTeleport(projectile);
@@ -122,7 +122,7 @@ function runGame(app) {
             if (planet.checkCollision(alien)) {
                 planet.takeDamage();
                 alien.destroy();
-                aliens.splice(j, 1);
+                spliceFlyingObject(alien);
                 break;
 
             }
@@ -132,4 +132,13 @@ function runGame(app) {
 
 export function setFiringRate(value) {
     framesShootInterval = value;
+}
+
+export function spliceFlyingObject(object)
+{
+    const alienIndex = aliens.indexOf(object);
+    if (alienIndex !== -1) { aliens.splice(alienIndex, 1); }
+
+    const meteoriteIndex = meteorites.indexOf(object);
+    if (meteoriteIndex !== -1) { meteorites.splice(meteoriteIndex, 1); }
 }
