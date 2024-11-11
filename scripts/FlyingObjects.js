@@ -1,5 +1,6 @@
-import { container, app, scoreManager, creditManager } from './GameManager.js';
+import { container, app, scoreManager, creditManager, planet } from './GameManager.js';
 import { Explosion } from './Explosion.js';
+import { Planet } from './Planet.js';
 
 class FlyingObject 
 {
@@ -14,6 +15,7 @@ class FlyingObject
         this.spritePath;
         this.spriteWidth;
         this.spriteHeight;
+
         
     }
 
@@ -95,7 +97,13 @@ class FlyingObject
 
     setupClickListener() 
     {
-        this.currentAnimatedSprite.on('pointerdown', () => this.destroy());
+        this.currentAnimatedSprite.on('pointerdown', () =>this.condicionDeClick() );
+
+    }
+
+    condicionDeClick()
+    {
+        if( planet.life > 0) { this.destroy(); }
     }
 
     destroy() 

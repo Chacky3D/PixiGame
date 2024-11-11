@@ -10,8 +10,9 @@ export class Planet
         this.spritePath = 'sprites/star.json';
         this.spriteWidth = 128;
         this.spriteHeight = 128;
-        this.life = 10; // Vida del planeta
+        this.life = 10;
         this.loadSpriteSheet();
+        this.radius = 50;
     }
 
     //Carga el spritesheet del objeto basado en el "spritePath".
@@ -82,8 +83,25 @@ export class Planet
 
     takeDamage(){
     //Resta vida del planeta y lo destruye si llega la vida a 0.
-        this.life -= 1;
-        if (this.life <= 0) { this.destroy();} 
+        if (this.life > 0)
+        {
+            this.life -= 1;
+        }
+        if (this.life <= 0) 
+        { 
+            this.destroy();
+        } 
+    }
+
+    checkCollision(alien) 
+    {   
+        //if (!projectile.isLoaded) return false;
+
+        const distX = 0 - alien.flyingObjectContainer.x;
+        const distY = 0 - alien.flyingObjectContainer.y;
+        const distance = Math.sqrt(distX * distX + distY * distY);
+        
+        return distance < this.radius + alien.radius;
     }
 
 

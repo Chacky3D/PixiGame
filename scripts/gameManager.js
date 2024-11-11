@@ -41,8 +41,7 @@ app.init({
     runGame(app);
 });
 
-function initContainer()
-{
+function initContainer() {
     container.x = app.screen.width / 2;
     container.y = app.screen.height / 2;
     app.stage.addChild(container);
@@ -50,77 +49,65 @@ function initContainer()
 
 function runGame(app) {
 
-     // Loop del juego (el Update)
-    app.ticker.add(() => 
-    {
+    // Loop del juego (el Update)
+    app.ticker.add(() => {
         //console.log(`FPS actual: ${app.ticker.FPS}`);
-        
+
         // Actualizar el ángulo dependiendo de la tecla presionada
-        if (gameInput.rotateCounterClockwise) 
-        {
+        if (gameInput.rotateCounterClockwise) {
             angle -= rotationSpeed;
         }
-        if (gameInput.rotateClockwise) 
-        {
+        if (gameInput.rotateClockwise) {
             angle += rotationSpeed;
         }
 
         //Mover las entidades del juego.
         player.move();
         projectiles.forEach(projectile => projectile.move());
-        aliens.forEach(alien => alien.move());
+        if (planet.life > 0) { aliens.forEach(alien => alien.move()); }
         meteorites.forEach(meteorite => meteorite.move());
-        
+
         frames += 1;
-        
-        if (frames % 2 == 0)
-        {
+
+        if (frames % 2 == 0) {
             checkCollisions();
         }
 
-        if (frames % 8 == 0)
-        {
+        if (frames % 8 == 0) {
             hud.updateHUD();
         }
 
         // Invocar Aliens y meteoritos
         //Cada 1s
-        if (frames % 60 == 0)
-        {
+        if (frames % 60 == 0) {
             const alien = new Alien();
             aliens.push(alien);
         }
 
         //Cada 10s
-        if (frames % 600 == 0)
-        {
+        if (frames % 600 == 0) {
             const alien = new TeleportingAlien();
             aliens.push(alien);
         }
 
         //Cada 16s
-        if (frames % 960 == 0)
-        {
+        if (frames % 960 == 0) {
             const meteorite = new Meteorite();
             meteorites.push(meteorite);
         }
 
-        if ((frames - gameInput.actualFramesStartShooting) % framesShootInterval == 0 && (gameInput.shooting || gameInput.holdingShoot)){
+        if ((frames - gameInput.actualFramesStartShooting) % framesShootInterval == 0 && (gameInput.shooting || gameInput.holdingShoot)) {
             player.shoot();
         }
 
     });
 
-    function checkCollisions() 
-    {
-        for (let i = aliens.length - 1; i >= 0; i--) 
-        {
+    function checkCollisions() {   // colicion de aliens con los proyectiles
+        for (let i = aliens.length - 1; i >= 0; i--) {
             const alien = aliens[i];
-            for (let j = projectiles.length - 1; j >= 0; j--) 
-            {
+            for (let j = projectiles.length - 1; j >= 0; j--) {
                 const projectile = projectiles[j];
-                if (alien.checkCollision(projectile)) 
-                {
+                if (alien.checkCollision(projectile)) {
                     projectile.destroy();
                     alien.destroy();
                     aliens.splice(i, 1);
@@ -129,10 +116,20 @@ function runGame(app) {
                 alien.checkProximityAndTeleport(projectile);
             }
         }
+        // colicion de aliens con el planeta
+        for (let j = aliens.length - 1; j >= 0; j--) {
+            const alien = aliens[j];
+            if (planet.checkCollision(alien)) {
+                planet.takeDamage();
+                alien.destroy();
+                aliens.splice(j, 1);
+                break;
+
+            }
+        }
     }
 }
 
-export function setFiringRate(value)
-{
+export function setFiringRate(value) {
     framesShootInterval = value;
 }
