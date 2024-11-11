@@ -155,6 +155,73 @@ export class Alien extends FlyingObject
     checkProximityAndTeleport(projectile){}
 }
 
+export class AlienComandante extends Alien {
+    constructor(x, y) {
+        super(x, y);
+        this.cohesionFactor = 0.01;       // Ajusta la magnitud de cada fuerza
+        this.alignmentFactor = 0.05;
+        this.separationFactor = 0.1;
+    }
+
+    applyBoidsBehavior(nearbyAliens) {
+        const cohesion = this.cohesion(nearbyAliens);
+        const alignment = this.alignment(nearbyAliens);
+        const separation = this.separation(nearbyAliens);
+
+        // Aplica las fuerzas calculadas
+        this.velocity.x += cohesion.x * this.cohesionFactor + alignment.x * this.alignmentFactor + separation.x * this.separationFactor;
+        this.velocity.y += cohesion.y * this.cohesionFactor + alignment.y * this.alignmentFactor + separation.y * this.separationFactor;
+    }
+
+    cohesion(nearbyAliens) {
+        let averagePosition = { x: 0, y: 0 };
+        nearbyAliens.forEach(alien => {
+            averagePosition.x += alien.x;
+            averagePosition.y += alien.y;
+        });
+
+        averagePosition.x /= nearbyAliens.length;
+        averagePosition.y /= nearbyAliens.length;
+
+        // Calcula el vector hacia la posición promedio
+        return {
+            x: (averagePosition.x - this.x),
+            y: (averagePosition.y - this.y)
+        };
+    }
+
+    alignment(nearbyAliens) {
+        let averageVelocity = { x: 0, y: 0 };
+        nearbyAliens.forEach(alien => {
+            averageVelocity.x += alien.velocity.x;
+            averageVelocity.y += alien.velocity.y;
+        });
+
+        averageVelocity.x /= nearbyAliens.length;
+        averageVelocity.y /= nearbyAliens.length;
+
+        return {
+            x: averageVelocity.x - this.velocity.x,
+            y: averageVelocity.y - this.velocity.y
+        };
+    }
+
+    separation(nearbyAliens) {
+        let separationForce = { x: 0, y: 0 };
+        nearbyAliens.forEach(alien => {
+            const dx = this.x - alien.x;
+            const dy = this.y - alien.y;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+            if (distance > 0 && distance < 50) { // Mantén a una distancia de 50
+                separationForce.x += dx / distance;
+                separationForce.y += dy / distance;
+            }
+        });
+
+        return separationForce;
+    }
+}
+
 export class TeleportingAlien extends Alien 
 {
     constructor() 

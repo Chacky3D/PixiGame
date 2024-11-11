@@ -1,10 +1,12 @@
 import { Alien } from './FlyingObjects.js';
 import { TeleportingAlien } from './FlyingObjects.js';
+import { AlienComandante } from './FlyingObjects.js';
 import { Meteorite } from './FlyingObjects.js';
 import { Player } from './Player.js';
 import { Planet } from './Planet.js';
 import { CreditManager } from './CreditManager.js';
 import { ScoreManager } from './ScoreManager.js';
+import { SpatialHash } from './SpatialHash.js';
 import { HUD } from './Hud.js';
 import { GameInput } from './GameInput.js';
 import { Background } from './Background.js';
@@ -16,6 +18,7 @@ export const player = new Player();
 export const planet = new Planet();
 export const creditManager = new CreditManager();
 export const scoreManager = new ScoreManager();
+export const spatialHash = new SpatialHash(100);
 export let hud;
 
 export let angle = 0;
@@ -84,6 +87,13 @@ function runGame(app) {
             aliens.push(alien);
         }
 
+        //Cada 3s
+        if (frames % 180 == 0)
+        {
+            const alien = new AlienComandante();
+            aliens.push(alien);
+        }
+
         //Cada 10s
         if (frames % 600 == 0) {
             const alien = new TeleportingAlien();
@@ -100,6 +110,7 @@ function runGame(app) {
             player.shoot();
         }
 
+        updateAliensHashing();
     });
 
     function checkCollisions() {   // colicion de aliens con los proyectiles
@@ -141,4 +152,20 @@ export function spliceFlyingObject(object)
 
     const meteoriteIndex = meteorites.indexOf(object);
     if (meteoriteIndex !== -1) { meteorites.splice(meteoriteIndex, 1); }
+}
+
+function updateAliensHashing() {
+    // Limpia el hash de la iteración anterior
+    spatialHash.clear();
+
+    // Inserta cada alien en la estructura del hash
+    aliens.forEach(alien => spatialHash.insert(alien));
+
+    // Actualiza cada alien usando el hash para obtener los vecinos cercanos
+    aliens.forEach(alien => {
+        if (alien instanceof AlienComandante) {
+            const nearbyAliens = spatialHash.getNearby(alien.x, alien.y);
+            alien.applyBoidsBehavior(nearbyAliens);
+        }
+    });
 }
