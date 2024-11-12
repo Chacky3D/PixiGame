@@ -121,7 +121,7 @@ function runGame(app) {
                 if (alien.checkCollision(projectile)) {
                     projectile.destroy();
                     alien.destroy();
-                    spliceFlyingObject(projectile);
+                    spliceFlyingObject(alien);
                     break;
                 }
                 alien.checkProximityAndTeleport(projectile);
