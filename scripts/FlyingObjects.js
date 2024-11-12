@@ -119,6 +119,14 @@ class FlyingObject
         this.flyingObjectContainer.x -= Math.cos(this.angleToPlanet) * this.speed;
         this.flyingObjectContainer.y -= Math.sin(this.angleToPlanet) * this.speed;
     }
+
+    calculateDistance(flyingObjectContainer, projectile = null)
+    {
+        const distanceX = projectile != null ? flyingObjectContainer.x - projectile.projectile.x : flyingObjectContainer.x;
+        const distanceY = projectile != null ? flyingObjectContainer.y - projectile.projectile.y : flyingObjectContainer.y;
+        const distance = Math.sqrt(distanceX * distanceX + distanceY * distanceY);
+        return distance;
+    }
 }
 
 export class Alien extends FlyingObject 
@@ -145,9 +153,7 @@ export class Alien extends FlyingObject
     {   
         if (!projectile.isLoaded) return false;
 
-        const distX = this.flyingObjectContainer.x - projectile.projectile.x;
-        const distY = this.flyingObjectContainer.y - projectile.projectile.y;
-        const distance = Math.sqrt(distX * distX + distY * distY);
+        const distance = this.calculateDistance(this.flyingObjectContainer, projectile);
 
         return distance < this.radius + projectile.radius;
     }
@@ -169,9 +175,7 @@ export class TeleportingAlien extends Alien
     {
         if (!projectile.isLoaded) return false;
 
-        const distX = this.flyingObjectContainer.x - projectile.projectile.x;
-        const distY = this.flyingObjectContainer.y - projectile.projectile.y;
-        const distance = Math.sqrt(distX * distX + distY * distY);
+        const distance = this.calculateDistance(this.flyingObjectContainer, projectile);
 
         if (distance < this.proyectileDistanceThreshold) 
         {
@@ -182,15 +186,13 @@ export class TeleportingAlien extends Alien
     // Método para cambiar de ángulo (manteniendo la distancia radial)
     teleport() 
     {
-    const dx = this.flyingObjectContainer.x;
-    const dy = this.flyingObjectContainer.y;
-    const currentDistanceToPlanet = Math.sqrt(dx * dx + dy * dy);
+        const currentDistanceToPlanet = this.calculateDistance(this.flyingObjectContainer);
 
-    const angleOffset = (Math.random() - 0.5) * Math.PI; // Cambia a un ángulo aleatorio
-    this.angleToPlanet += angleOffset;
+        const angleOffset = (Math.random() - 0.5) * Math.PI; // Cambia a un ángulo aleatorio
+        this.angleToPlanet += angleOffset;
 
-    this.flyingObjectContainer.x = Math.cos(this.angleToPlanet) * currentDistanceToPlanet;
-    this.flyingObjectContainer.y = Math.sin(this.angleToPlanet) * currentDistanceToPlanet;
+        this.flyingObjectContainer.x = Math.cos(this.angleToPlanet) * currentDistanceToPlanet;
+        this.flyingObjectContainer.y = Math.sin(this.angleToPlanet) * currentDistanceToPlanet;
     }
 }
 
