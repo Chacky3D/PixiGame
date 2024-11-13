@@ -1,4 +1,4 @@
-import { container } from './GameManager.js';
+import { container, gameOver } from './GameManager.js';
 
 export class Planet
 {
@@ -78,6 +78,7 @@ export class Planet
 
     destroy(){
     //Elimina el planeta.
+        gameOver();
         container.removeChild(this.currentAnimatedSprite);
     }
 

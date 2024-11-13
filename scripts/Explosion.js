@@ -13,7 +13,6 @@ export class Explosion
         this.spriteWidth = 48;
         this.spriteHeight = 48;
         this.loadSpriteSheet();
-        console.log(this.x);
     }
 
     //Carga el spritesheet del objeto basado en el "spritePath".

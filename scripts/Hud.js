@@ -165,4 +165,50 @@ export class HUD
             return this.fireRates[i];
         }
     }
+
+    gameOver()
+    {
+        // Crear un contenedor para el Game Over
+        const gameOverContainer = new PIXI.Container();
+            
+        // Crear un rectángulo negro que ocupe toda la pantalla
+        const rect = new PIXI.Graphics();
+        rect.beginFill(0x030000);
+        rect.drawRect(0, 0, app.screen.width, app.screen.height);
+        rect.endFill();
+            
+        // Añadir el rectángulo al contenedor
+        gameOverContainer.addChild(rect);
+            
+            // Configurar el estilo de texto
+        const textStyle = new PIXI.TextStyle({
+            fontFamily: 'Arial',
+            fontSize: 36,
+            fill: '#ffffff',
+            align: 'center'
+        });
+            
+            // Crear el texto "Game Over"
+        const gameOverText = new PIXI.Text('GAME OVER', textStyle);
+        gameOverText.anchor.set(0.5);
+        gameOverText.position.set(app.screen.width / 2, app.screen.height / 4);
+            
+            // Crear el texto del puntaje
+        const scoreText = new PIXI.Text('Puntaje: ' + this.onscreenScore, textStyle);
+        scoreText.anchor.set(0.5);
+        scoreText.position.set(app.screen.width / 2, app.screen.height / 2);
+            
+            // Crear el texto "Presione F5 para reiniciar"
+        const restartText = new PIXI.Text('Presione F5 para reiniciar', textStyle);
+        restartText.anchor.set(0.5);
+        restartText.position.set(app.screen.width / 2, (app.screen.height / 4) * 3);
+            
+            // Añadir los textos al contenedor
+        gameOverContainer.addChild(gameOverText);
+        gameOverContainer.addChild(scoreText);
+        gameOverContainer.addChild(restartText);
+            
+        // Posicionar el contenedor por encima de todos los sprites
+        app.stage.addChild(gameOverContainer);
+    }
 }

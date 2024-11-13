@@ -149,6 +149,11 @@ export class Alien extends FlyingObject
         scoreManager.addScore(10);
     }
 
+    destroyByPlanet()
+    {
+        super.destroy();
+    }
+
     checkCollision(projectile) 
     {   
         if (!projectile.isLoaded) return false;
