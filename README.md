@@ -12,6 +12,8 @@ Juego desarrollado mediante la herramiente PixiJS, para la materia 'Programació
 
 # Comportamiento de los objetos:
 
+## Player
+
 ![Player](./readme-images/player_ship1.png)
 
 - Orbita alrededor de la estrella.
@@ -19,11 +21,15 @@ Juego desarrollado mediante la herramiente PixiJS, para la materia 'Programació
 - Mediante el click puede lazar un rayo desde la estrella que elimina a los enemigos.
 - Puede añadir naves a su flota y/o mejorar la cadencia de disparo.
 
+## Normal (Enemy)
+
 ![Normal Enemy](./readme-images/enemy1_ship1.png)
 
 - Se mueve hacia la estrella.
 - Puede colisionar con la estrella.
 - Puede ser eliminado tanto con disparos como con el click de mouse.
+
+## Doge (Enemy)
 
 ![Doge Enemy](./readme-images/enemy2_ship1.png)
 
@@ -32,11 +38,15 @@ Juego desarrollado mediante la herramiente PixiJS, para la materia 'Programació
 - Puede esquivar proyectiles.
 - Solo puede ser eliminado mediante el click.
 
+## Comander (Enemy)
+
 ![Commander Enemy](./readme-images/commander_ship1.png)
 
 - Se mueve hacia la estrella.
 - Agrupa las naves a su alrededor.
 - (AGREGAR LO QUE FALTE).
+
+## Asteroid
 
 ![Asteroid](./readme-images/asteroid1.png)
 
@@ -44,7 +54,9 @@ Juego desarrollado mediante la herramiente PixiJS, para la materia 'Programació
 - Da créditos que se pueden utilizar para comprar mejoras.
 - Solo puede ser eliminado mediante el click.
 
-![Estrella](./readme-images/star1.png)
+## Star
+
+![Star](./readme-images/star1.png)
 
 - Pierde un punto de vida cada vez que una nave colisiona con ella.
 - Puede ser destruida, finalizando el juego.
