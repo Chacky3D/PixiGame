@@ -1,4 +1,4 @@
-import { player, hud, frames, creditManager } from "./GameManager.js";
+import { player, hud, frames, creditManager, gameIsOver } from "./GameManager.js";
 
 export class GameInput
 {
@@ -50,9 +50,17 @@ export class GameInput
                         break;
         
                     case 'control':
-                        this.buyMenuVisible = !this.buyMenuVisible;
-                        hud.toggleBuyShipButton(this.buyMenuVisible);
-                        hud.toggleBuyFiringRateButton(this.buyMenuVisible);
+                        if(!gameIsOver)
+                        {
+                            this.buyMenuVisible = !this.buyMenuVisible;
+                            hud.toggleBuyShipButton(this.buyMenuVisible);
+                            hud.toggleBuyFiringRateButton(this.buyMenuVisible);
+                        }
+                        else
+                        {
+                            hud.toggleBuyShipButton(false);
+                            hud.toggleBuyFiringRateButton(false);
+                        }
                         break;
 
                     //DEBUG: borrar:
@@ -87,15 +95,6 @@ export class GameInput
                         break;
                 }
             });
-            /*
-            document.addEventListener("visibilitychange", () => {
-                if (document.hidden)
-                {
-                    clearInterval(this.shootingInterval);
-                    this.shootingInterval = null;
-                    console.log("something");
-                }
-            });*/
     }
     
     setActualFramesStartShooting()
