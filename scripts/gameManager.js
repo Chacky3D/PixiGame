@@ -1,10 +1,12 @@
 import { Alien } from './FlyingObjects.js';
 import { TeleportingAlien } from './FlyingObjects.js';
+import { AlienComandante } from './FlyingObjects.js';
 import { Meteorite } from './FlyingObjects.js';
 import { Player } from './Player.js';
 import { Planet } from './Planet.js';
 import { CreditManager } from './CreditManager.js';
 import { ScoreManager } from './ScoreManager.js';
+import { SpatialHash } from './SpatialHash.js';
 import { HUD } from './Hud.js';
 import { GameInput } from './GameInput.js';
 import { Background } from './Background.js';
@@ -16,6 +18,7 @@ export const player = new Player();
 export const planet = new Planet();
 export const creditManager = new CreditManager();
 export const scoreManager = new ScoreManager();
+export const spatialHash = new SpatialHash(100);
 export let hud;
 
 export let angle = 0;
@@ -75,6 +78,7 @@ function runGame(app) {
 
         if (frames % 2 == 0 && !gameIsOver) {
             checkCollisions();
+            updateAliensHashing();
         }
 
         if (frames % 8 == 0 && !gameIsOver) {
@@ -85,6 +89,13 @@ function runGame(app) {
         //Cada 1s
         if (frames % 60 == 0 && !gameIsOver) {
             const alien = new Alien();
+            aliens.push(alien);
+        }
+
+        //Cada 3s
+        if (frames % 180 == 0)
+        {
+            const alien = new AlienComandante();
             aliens.push(alien);
         }
 
@@ -145,6 +156,23 @@ export function spliceFlyingObject(object)
 
     const meteoriteIndex = meteorites.indexOf(object);
     if (meteoriteIndex !== -1) { meteorites.splice(meteoriteIndex, 1); }
+}
+
+function updateAliensHashing() {
+    // Limpia el hash de la iteración anterior
+    spatialHash.clear();
+
+    // Inserta cada alien en la estructura del hash
+    aliens.forEach(alien => spatialHash.insert(alien));
+
+    // Actualiza cada alien usando el hash para obtener los vecinos cercanos
+    aliens.forEach(alien => {
+        const nearbyAliens = spatialHash.getNearby(alien.flyingObjectContainer.x, alien.flyingObjectContainer.y);
+        if (alien instanceof AlienComandante) {
+            alien.applyComandanteBehavior(nearbyAliens);
+        }
+        alien.applySeparation(nearbyAliens);
+    });
 }
 
 export function gameOver()

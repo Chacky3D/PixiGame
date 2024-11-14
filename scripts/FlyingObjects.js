@@ -15,8 +15,8 @@ class FlyingObject
         this.spritePath;
         this.spriteWidth;
         this.spriteHeight;
-
-        
+        this.velocityXAdjustment;
+        this.velocityYAdjustment;
     }
 
     //Carga el spritesheet del objeto basado en el "spritePath".
@@ -116,14 +116,26 @@ class FlyingObject
 
     move() 
     {
-        this.flyingObjectContainer.x -= Math.cos(this.angleToPlanet) * this.speed;
-        this.flyingObjectContainer.y -= Math.sin(this.angleToPlanet) * this.speed;
+        const velocityX = Math.cos(this.angleToPlanet) * this.speed;
+        const velocityY = Math.sin(this.angleToPlanet) * this.speed;
+
+        
+        this.flyingObjectContainer.x -= velocityX;
+        this.flyingObjectContainer.y -= velocityY;
     }
 
     calculateDistance(flyingObjectContainer, projectile = null)
     {
         const distanceX = projectile != null ? flyingObjectContainer.x - projectile.projectile.x : flyingObjectContainer.x;
         const distanceY = projectile != null ? flyingObjectContainer.y - projectile.projectile.y : flyingObjectContainer.y;
+        const distance = Math.sqrt(distanceX * distanceX + distanceY * distanceY);
+        return distance;
+    }
+
+    calculateAlienDistance(alien1, alien2)
+    {
+        const distanceX = alien1.flyingObjectContainer.x - alien2.flyingObjectContainer.x;
+        const distanceY = alien1.flyingObjectContainer.y - alien2.flyingObjectContainer.y;
         const distance = Math.sqrt(distanceX * distanceX + distanceY * distanceY);
         return distance;
     }
@@ -141,6 +153,26 @@ export class Alien extends FlyingObject
         this.spriteWidth = 48;
         this.spriteHeight = 48;
         this.loadSpriteSheet();
+        this.separationDistance = 40;
+        this.separationForce = 1;
+    }
+
+    applySeparation(neighbors)
+    {
+        neighbors.forEach(neighbor => {
+            if (neighbor !== this) {
+                const distance = this.calculateAlienDistance(this, neighbor);
+                if (distance < this.separationDistance) {
+                    // Calcula la dirección de la fuerza de separación
+                    const separationX = this.flyingObjectContainer.x - neighbor.flyingObjectContainer.x;
+                    const separationY = this.flyingObjectContainer.y - neighbor.flyingObjectContainer.y;
+                    const length = Math.sqrt(separationX ** 2 + separationY ** 2);
+                    // Aplica la fuerza de separación
+                    this.flyingObjectContainer.x += (separationX / length) * this.separationForce;
+                    this.flyingObjectContainer.y += (separationY / length) * this.separationForce;
+                }
+            }
+        });
     }
 
     destroy() 
@@ -164,6 +196,25 @@ export class Alien extends FlyingObject
     }
 
     checkProximityAndTeleport(projectile){}
+}
+
+export class AlienComandante extends Alien {
+    constructor() {
+        super('sprites/commander_ship.json');;
+        this.effectDistance = 100;
+    }
+
+    applyComandanteBehavior(nearbyAliens) {
+
+        nearbyAliens.forEach(alien => {
+            const distance = this.calculateAlienDistance(this, alien)
+            
+            if (alien != this && distance < this.effectDistance) {
+                alien.flyingObjectContainer.tint = 0x00FF00;
+            }
+        })
+    }
+
 }
 
 export class TeleportingAlien extends Alien 
