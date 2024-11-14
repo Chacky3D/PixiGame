@@ -153,6 +153,26 @@ export class Alien extends FlyingObject
         this.spriteWidth = 48;
         this.spriteHeight = 48;
         this.loadSpriteSheet();
+        this.separationDistance = 40;
+        this.separationForce = 1;
+    }
+
+    applySeparation(neighbors)
+    {
+        neighbors.forEach(neighbor => {
+            if (neighbor !== this) {
+                const distance = this.calculateAlienDistance(this, neighbor);
+                if (distance < this.separationDistance) {
+                    // Calcula la dirección de la fuerza de separación
+                    const separationX = this.flyingObjectContainer.x - neighbor.flyingObjectContainer.x;
+                    const separationY = this.flyingObjectContainer.y - neighbor.flyingObjectContainer.y;
+                    const length = Math.sqrt(separationX ** 2 + separationY ** 2);
+                    // Aplica la fuerza de separación
+                    this.flyingObjectContainer.x += (separationX / length) * this.separationForce;
+                    this.flyingObjectContainer.y += (separationY / length) * this.separationForce;
+                }
+            }
+        });
     }
 
     destroy() 
@@ -179,10 +199,8 @@ export class Alien extends FlyingObject
 }
 
 export class AlienComandante extends Alien {
-    constructor(x, y) {
-        super(x, y);
-        this.spritePath = 'sprites/normal_ship.json';
-        this.flyingObjectContainer.tint = 0x00FF00;
+    constructor() {
+        super('sprites/commander_ship.json');;
         this.effectDistance = 100;
     }
 
@@ -192,7 +210,7 @@ export class AlienComandante extends Alien {
             const distance = this.calculateAlienDistance(this, alien)
             
             if (alien != this && distance < this.effectDistance) {
-                alien.flyingObjectContainer.tint = 0xFF0000;
+                alien.flyingObjectContainer.tint = 0x00FF00;
             }
         })
     }

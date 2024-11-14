@@ -167,10 +167,11 @@ function updateAliensHashing() {
 
     // Actualiza cada alien usando el hash para obtener los vecinos cercanos
     aliens.forEach(alien => {
+        const nearbyAliens = spatialHash.getNearby(alien.flyingObjectContainer.x, alien.flyingObjectContainer.y);
         if (alien instanceof AlienComandante) {
-            const nearbyAliens = spatialHash.getNearby(alien.flyingObjectContainer.x, alien.flyingObjectContainer.y);
             alien.applyComandanteBehavior(nearbyAliens);
         }
+        alien.applySeparation(nearbyAliens);
     });
 }
 
