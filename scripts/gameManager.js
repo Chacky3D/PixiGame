@@ -22,6 +22,7 @@ export const spatialHash = new SpatialHash(100);
 export let hud;
 
 export let angle = 0;
+export let gameIsOver = false;
 
 export const gameInput = new GameInput();
 const background = new Background();
@@ -57,32 +58,35 @@ function runGame(app) {
         //console.log(`FPS actual: ${app.ticker.FPS}`);
 
         // Actualizar el ángulo dependiendo de la tecla presionada
-        if (gameInput.rotateCounterClockwise) {
+        if (gameInput.rotateCounterClockwise && !gameIsOver) {
             angle -= rotationSpeed;
         }
-        if (gameInput.rotateClockwise) {
+        if (gameInput.rotateClockwise && !gameIsOver) {
             angle += rotationSpeed;
         }
 
         //Mover las entidades del juego.
-        player.move();
-        projectiles.forEach(projectile => projectile.move());
-        if (planet.life > 0) { aliens.forEach(alien => alien.move()); }
-        meteorites.forEach(meteorite => meteorite.move());
+        if(!gameIsOver)
+        {
+            player.move();
+            projectiles.forEach(projectile => projectile.move());
+            aliens.forEach(alien => alien.move());
+            meteorites.forEach(meteorite => meteorite.move());
+        }
 
         frames += 1;
 
-        if (frames % 2 == 0) {
+        if (frames % 2 == 0 && !gameIsOver) {
             checkCollisions();
         }
 
-        if (frames % 8 == 0) {
+        if (frames % 8 == 0 && !gameIsOver) {
             hud.updateHUD();
         }
 
         // Invocar Aliens y meteoritos
         //Cada 1s
-        if (frames % 60 == 0) {
+        if (frames % 60 == 0 && !gameIsOver) {
             const alien = new Alien();
             aliens.push(alien);
         }
@@ -95,13 +99,13 @@ function runGame(app) {
         }
 
         //Cada 10s
-        if (frames % 600 == 0) {
+        if (frames % 600 == 0 && !gameIsOver) {
             const alien = new TeleportingAlien();
             aliens.push(alien);
         }
 
         //Cada 16s
-        if (frames % 960 == 0) {
+        if (frames % 960 == 0 && !gameIsOver) {
             const meteorite = new Meteorite();
             meteorites.push(meteorite);
         }
@@ -132,7 +136,7 @@ function runGame(app) {
             const alien = aliens[j];
             if (planet.checkCollision(alien)) {
                 planet.takeDamage();
-                alien.destroy();
+                alien.destroyByPlanet();
                 spliceFlyingObject(alien);
                 break;
 
@@ -168,4 +172,10 @@ function updateAliensHashing() {
             alien.applyBoidsBehavior(nearbyAliens);
         }
     });
+}
+
+export function gameOver()
+{
+    gameIsOver = true;
+    hud.gameOver();
 }

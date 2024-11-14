@@ -1,4 +1,4 @@
-import { container, angle, projectiles } from './GameManager.js';
+import { container, angle, projectiles, gameIsOver } from './GameManager.js';
 import { Projectile } from './Projectile.js';
 import { Ship } from './Ship.js';
 
@@ -58,12 +58,15 @@ export class Player
 
     shoot()
     {
-        let i = 0;
-        this.ships.forEach(s => 
+        if (!gameIsOver)
         {
-            projectiles.push(new Projectile(s.currentAnimatedSprite, angle - this.sideShipOffsetAngle * i));
-            i++;
-        })
+            let i = 0;
+            this.ships.forEach(s => 
+            {
+                projectiles.push(new Projectile(s.currentAnimatedSprite, angle - this.sideShipOffsetAngle * i));
+                i++;
+            })
+        }
     }
 
 }
