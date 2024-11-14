@@ -13,7 +13,8 @@ export class SpatialHash {
 
     // Agrega un alien a una celda
     insert(alien) {
-        const key = this.getCellKey(alien.x, alien.y);
+        const key = this.getCellKey(alien.flyingObjectContainer.x, alien.flyingObjectContainer.y);
+        
         if (!this.grid.has(key)) {
             this.grid.set(key, []);
         }
@@ -23,18 +24,18 @@ export class SpatialHash {
     // Obtiene los aliens cercanos
     getNearby(x, y) {
         const cellKey = this.getCellKey(x, y);
+        const [cellX, cellY] = cellKey.split(',').map(Number); // Divide y convierte a números
         const neighbors = [];
 
         // Revisa las celdas adyacentes
         for (let dx = -1; dx <= 1; dx++) {
             for (let dy = -1; dy <= 1; dy++) {
-                const adjacentKey = `${cellKey[0] + dx},${cellKey[1] + dy}`;
+                const adjacentKey = `${cellX + dx},${cellY + dy}`;
                 if (this.grid.has(adjacentKey)) {
                     neighbors.push(...this.grid.get(adjacentKey));
                 }
             }
         }
-
         return neighbors;
     }
 

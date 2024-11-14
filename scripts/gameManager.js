@@ -78,6 +78,7 @@ function runGame(app) {
 
         if (frames % 2 == 0 && !gameIsOver) {
             checkCollisions();
+            updateAliensHashing();
         }
 
         if (frames % 8 == 0 && !gameIsOver) {
@@ -114,7 +115,6 @@ function runGame(app) {
             player.shoot();
         }
 
-        updateAliensHashing();
     });
 
     function checkCollisions() {   // colicion de aliens con los proyectiles
@@ -168,8 +168,8 @@ function updateAliensHashing() {
     // Actualiza cada alien usando el hash para obtener los vecinos cercanos
     aliens.forEach(alien => {
         if (alien instanceof AlienComandante) {
-            const nearbyAliens = spatialHash.getNearby(alien.x, alien.y);
-            alien.applyBoidsBehavior(nearbyAliens);
+            const nearbyAliens = spatialHash.getNearby(alien.flyingObjectContainer.x, alien.flyingObjectContainer.y);
+            alien.applyComandanteBehavior(nearbyAliens);
         }
     });
 }
