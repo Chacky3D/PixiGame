@@ -29,7 +29,7 @@ export class HUD
         this.lifeText = new PIXI.Text('Puntaje: 0', {
             fontFamily: 'Arial',
             fontSize: 24,
-            fill: 0xffffff,
+            fill: 0xF9C22B,
             align: 'left'
         });
         this.lifeText.anchor.set(0.5, 0);
@@ -39,7 +39,7 @@ export class HUD
         this.creditsText = new PIXI.Text('Créditos: 0', {
             fontFamily: 'Arial',
             fontSize: 24,
-            fill: 0xffffff,
+            fill: 0xF9C22B,
             align: 'right'
         });
         this.creditsText.anchor.set(1, 0);
