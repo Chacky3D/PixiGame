@@ -1,6 +1,6 @@
 import { container, app, scoreManager, creditManager, planet, spliceFlyingObject } from './GameManager.js';
 import { Explosion } from './Explosion.js';
-import { Planet } from './Planet.js';
+import { LaserBeam } from './LaseBeam.js';
 
 class FlyingObject 
 {
@@ -97,7 +97,11 @@ class FlyingObject
 
     setupClickListener() 
     {
-        this.currentAnimatedSprite.on('pointerdown', () =>this.condicionDeClick() );
+        this.currentAnimatedSprite.on('pointerdown', (event) => 
+            {
+                this.condicionDeClick()
+                new LaserBeam(event);
+            });
     }
 
     condicionDeClick()
