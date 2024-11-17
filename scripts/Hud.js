@@ -114,7 +114,7 @@ export class HUD
     handleBuyShip()
     {
         const shipCost = 2;
-        if (creditManager.credits >= shipCost) {
+        if (creditManager.credits >= shipCost && player.ships.length < 5) {
             creditManager.addCredits(-shipCost);
             player.createNewShip();
             this.updateHUD();
