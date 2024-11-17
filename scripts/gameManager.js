@@ -28,6 +28,7 @@ export const gameInput = new GameInput();
 const background = new Background();
 const aliens = [];
 const meteorites = [];
+export let alienVelocityFactor = 1;
 const rotationSpeed = 0.05;
 
 export let frames = 0;
@@ -81,26 +82,30 @@ function runGame(app) {
             updateAliensHashing();
         }
 
+        if ((frames + 1) % 2 == 0 && !gameIsOver) {
+            alienVelocityFactorCalculation(frames);
+        }
+
         if (frames % 8 == 0 && !gameIsOver) {
             hud.updateHUD();
         }
 
         // Invocar Aliens y meteoritos
         //Cada 1s
-        if (frames % 60 == 0 && !gameIsOver) {
+        if (frames % (Math.floor(60/alienVelocityFactor)) == 0 && !gameIsOver) {
             const alien = new Alien();
             aliens.push(alien);
         }
 
         //Cada 4.5s
-        if (frames % (4.5 * 60) == 0)
+        if (frames % (Math.floor((4.5 * 60)/alienVelocityFactor)) == 0 && !gameIsOver)
         {
             const alien = new AlienComandante();
             aliens.push(alien);
         }
 
         //Cada 10s
-        if (frames % 600 == 0 && !gameIsOver) {
+        if (frames % (Math.floor(600/alienVelocityFactor)) == 0 && !gameIsOver) {
             const alien = new TeleportingAlien();
             aliens.push(alien);
         }
@@ -116,6 +121,18 @@ function runGame(app) {
         }
 
     });
+
+    
+    function alienVelocityFactorCalculation(frames) {
+
+        const currentMinutes = frames/(60*60);
+        const targetTime = 10;  // A cuantos minutos quiero calcular
+        const targetFactor = 2; // Que valor quiero obtener en targetTime
+        
+        const m = (targetFactor - 1) / (targetTime - 0);// Calcula la pendiente m: (y2 - y1) / (x2 - x1)
+        
+        alienVelocityFactor = m * currentMinutes + 1; // Ecuación de la recta: y = mx + 1
+    }
 
     function checkCollisions() {   // colicion de aliens con los proyectiles
         for (let i = aliens.length - 1; i >= 0; i--) {

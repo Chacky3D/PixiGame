@@ -5,10 +5,10 @@ Juego desarrollado mediante la herramiente PixiJS, para la materia 'Programació
 # Controles:
 
 - 'A' | 'D' para orbitar alrededor de la estrella.
-- 'ESPACIO' para disparar. (Se puede mantener presionado)
+- 'ESPACIO' para disparar proyectil común. (Se puede mantener presionado)
+- 'SHIFT' para mantener el disparo común constante sin necesidad de tener pulsada la tecla 'ESPACIO'. (Se desactiva de igual manera)
+- 'LEFT MOUSE' para ejecutar disparo laser.
 - 'CONTROL' para abrir el menú de compra, que permite agregar una nave a la flota (opción superior) o aumentar la cadencia de disparo (opción inferior).
-- 'SHIFT' para mantener el disparo constante sin necesidad de tener pulsada la tecla 'ESPACIO'.
-- 'LEFT MOUSE' para eliminar naves/asteroides.
 
 # Comportamiento de los objetos:
 
@@ -27,7 +27,7 @@ Juego desarrollado mediante la herramiente PixiJS, para la materia 'Programació
 
 - Se mueve hacia la estrella.
 - Puede colisionar con la estrella.
-- Puede ser eliminado tanto con disparos como con el click de mouse.
+- Puede ser eliminado tanto con disparos comunes como con el laser.
 
 ## Doge (Enemy)
 
@@ -36,15 +36,15 @@ Juego desarrollado mediante la herramiente PixiJS, para la materia 'Programació
 - Se mueve hacia la estrella.
 - Puede colisionar con la estrella.
 - Puede esquivar proyectiles.
-- Solo puede ser eliminado mediante el click.
+- Solo puede ser eliminado mediante el laser.
 
 ## Comander (Enemy)
 
 ![Commander Enemy](./readme-images/commander_ship1.png)
 
 - Se mueve hacia la estrella.
-- Agrupa las naves a su alrededor.
-- (AGREGAR LO QUE FALTE).
+- Ordena a dos aliados que lo protejan a modo de escudo.
+- Solo puede ser eliminado mediante el disparo común (inmune al laser).
 
 ## Asteroid
 
@@ -52,7 +52,7 @@ Juego desarrollado mediante la herramiente PixiJS, para la materia 'Programació
 
 - Se mueve evitando la estrella.
 - Da créditos que se pueden utilizar para comprar mejoras.
-- Solo puede ser eliminado mediante el click.
+- Solo puede ser eliminado mediante el laser.
 
 ## Star
 
@@ -65,6 +65,10 @@ Juego desarrollado mediante la herramiente PixiJS, para la materia 'Programació
 
 - Defender la estrella de las naves invasoras.
 - Alcanzar la mayor cantidad de puntos posibles.
+
+# Aclaraciones:
+
+- A medida que el tiempo avanza, la velocidad de movimiento y la frecuencia de aparición de los aliens aumenta.
 
 # Integrantes:
 
