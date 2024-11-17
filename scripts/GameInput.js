@@ -62,18 +62,7 @@ export class GameInput
                             hud.toggleBuyFiringRateButton(false);
                         }
                         break;
-
-                    //DEBUG: borrar:
-                    case 'k':
-                        player.createNewShip();
-                        break;
-        
-                    case 'l':
-                        player.removeSideShips();
-                        break;
-                    
-                    case 'p':
-                        creditManager.addCredits(20);
+                        
                 }
             });
             
