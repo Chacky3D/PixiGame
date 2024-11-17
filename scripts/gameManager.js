@@ -18,7 +18,7 @@ export const player = new Player();
 export const planet = new Planet();
 export const creditManager = new CreditManager();
 export const scoreManager = new ScoreManager();
-export const spatialHash = new SpatialHash(100);
+export const spatialHash = new SpatialHash(200);
 export let hud;
 
 export let angle = 0;
@@ -92,8 +92,8 @@ function runGame(app) {
             aliens.push(alien);
         }
 
-        //Cada 3s
-        if (frames % 180 == 0)
+        //Cada 4.5s
+        if (frames % (4.5 * 60) == 0)
         {
             const alien = new AlienComandante();
             aliens.push(alien);
@@ -106,7 +106,7 @@ function runGame(app) {
         }
 
         //Cada 16s
-        if (frames % 960 == 0 && !gameIsOver) {
+        if (frames % (16 * 60) == 0 && !gameIsOver) {
             const meteorite = new Meteorite();
             meteorites.push(meteorite);
         }

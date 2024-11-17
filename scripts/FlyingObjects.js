@@ -159,6 +159,7 @@ export class Alien extends FlyingObject
         this.loadSpriteSheet();
         this.separationDistance = 40;
         this.separationForce = 1;
+        this.comandanteForceAtenuation = 50;
     }
 
     applySeparation(neighbors)
@@ -177,6 +178,13 @@ export class Alien extends FlyingObject
                 }
             }
         });
+    }
+
+    applyComandanteForce(reunionPoint)
+    {
+        const relativeVector = {x: this.flyingObjectContainer.x - reunionPoint.x, y: this.flyingObjectContainer.y - reunionPoint.y}
+        this.flyingObjectContainer.x -= relativeVector.x / this.comandanteForceAtenuation;
+        this.flyingObjectContainer.y -= relativeVector.y / this.comandanteForceAtenuation;
     }
 
     destroy() 
@@ -205,19 +213,29 @@ export class Alien extends FlyingObject
 export class AlienComandante extends Alien {
     constructor() {
         super('sprites/commander_ship.json');;
-        this.effectDistance = 100;
+        this.effectDistance = 200;
+        this.targetDistanceOffset = 60;
+        this.maxObedientAliens = 2;
     }
 
     applyComandanteBehavior(nearbyAliens) {
+        const distanceToOrigin = Math.sqrt(this.flyingObjectContainer.x ** 2 + this.flyingObjectContainer.y ** 2);
+        const targetDistance = distanceToOrigin - this.targetDistanceOffset;
+        const unitVector = {x: this.flyingObjectContainer.x / distanceToOrigin, y: this.flyingObjectContainer.y / distanceToOrigin};
+        const reunionPoint = {x: unitVector.x * targetDistance, y: unitVector.y * targetDistance};
 
-        nearbyAliens.forEach(alien => {
-            const distance = this.calculateAlienDistance(this, alien)
-            
-            if (alien != this && distance < this.effectDistance) {
-                alien.flyingObjectContainer.tint = 0x00FF00;
-            }
-        })
+        const obedientAliens = nearbyAliens
+            .filter(alien => !(alien instanceof AlienComandante || alien instanceof TeleportingAlien)) // Excluir comandantes y teleporting
+            .filter(alien => this.calculateAlienDistance(this, alien) < this.effectDistance) // Excluir los q están mas lejos de la distancia de efecto
+            .sort((a, b) => this.calculateAlienDistance(this, a) - this.calculateAlienDistance(this, b)) // Ordenar por distancia
+            .slice(0, this.maxObedientAliens); // Reducir lista a maxObedientAliens
+
+        obedientAliens.forEach(alien => {alien.applyComandanteForce(reunionPoint);})
     }
+
+    applySeparation(neighbors) {}
+
+    condicionDeClick() {}
 
 }
 
