@@ -11,7 +11,7 @@ export class Player
         this.orbitRadius = 85;
         this.ships = [];
         this.sideShipOffsetAngle = Math.PI / 6;
-        this.maxAmountOfShips = 12;
+        this.maxAmountOfShips = 5;
         this.initPlayer();
     }
 

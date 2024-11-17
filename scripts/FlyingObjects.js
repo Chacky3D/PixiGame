@@ -1,4 +1,4 @@
-import { container, app, scoreManager, creditManager, planet, spliceFlyingObject } from './GameManager.js';
+import { container, app, scoreManager, creditManager, planet, spliceFlyingObject, alienVelocityFactor } from './GameManager.js';
 import { Explosion } from './Explosion.js';
 import { LaserBeam } from './LaseBeam.js';
 
@@ -7,7 +7,8 @@ class FlyingObject
 
     constructor() 
     {
-        this.flyingObjectContainer = new PIXI.Container(); 
+        this.flyingObjectContainer = new PIXI.Container();
+        this.initialSpeed;
         this.speed;
         this.animatedSprites = {};
         this.currentAnimatedSprite;
@@ -118,8 +119,14 @@ class FlyingObject
         container.removeChild(this.flyingObjectContainer);
     }
 
+    aceleration()
+    {
+        this.speed = this.initialSpeed * alienVelocityFactor;
+    }
+
     move() 
     {
+        this.aceleration();
         const velocityX = Math.cos(this.angleToPlanet) * this.speed;
         const velocityY = Math.sin(this.angleToPlanet) * this.speed;
 
@@ -150,6 +157,7 @@ export class Alien extends FlyingObject
     constructor(path = null)
     {
         super();
+        this.initialSpeed = 0.8;
         this.speed = 0.8;
         this.radius = 15;
         this.animationSpeed = 0.3;
@@ -286,6 +294,8 @@ export class Meteorite extends FlyingObject
         this.spriteHeight = 48;
         this.loadSpriteSheet();
     }
+
+    aceleration(){}
     
     destroy() 
     {
