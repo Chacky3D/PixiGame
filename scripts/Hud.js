@@ -46,6 +46,26 @@ export class HUD
         this.creditsText.x = app.screen.width - 20;
         this.creditsText.y = 20;
 
+        this.upgradeShips = new PIXI.Text('Upgrade Ships', {
+            fontFamily: 'Arial',
+            fontSize: 16,
+            fill: 0xF9C22B,
+            align: 'right'
+        });
+        this.upgradeShips.anchor.set(1, 0);
+        this.upgradeShips.x = app.screen.width - 20;
+        this.upgradeShips.y = 50;
+
+        this.upgradeFiringRate = new PIXI.Text('Upgrade Firing Rate', {
+            fontFamily: 'Arial',
+            fontSize: 16,
+            fill: 0xF9C22B,
+            align: 'right'
+        });
+        this.upgradeFiringRate.anchor.set(1, 0);
+        this.upgradeFiringRate.x = app.screen.width - 20;
+        this.upgradeFiringRate.y = 70;
+
         this.holdText = new PIXI.Text('NO', {
             fontFamily: 'Arial',
             fontSize: 24,
@@ -90,6 +110,8 @@ export class HUD
         this.hudContainer.addChild(this.scoreText);
         this.hudContainer.addChild(this.lifeText);
         this.hudContainer.addChild(this.creditsText);
+        this.hudContainer.addChild(this.upgradeShips);
+        this.hudContainer.addChild(this.upgradeFiringRate);
         this.hudContainer.addChild(this.holdText);
         this.hudContainer.addChild(this.buyShipButton);
         this.hudContainer.addChild(this.buyFiringRateButton);
@@ -153,6 +175,8 @@ export class HUD
         this.lifeText.text = `Life: ${this.onscreenLife}`;
         this.creditsText.text = `${this.onscreenCredits} Cr.`;
         this.holdText.text = this.hold ? 'HOLD' : '';
+        this.upgradeShips.text = creditManager.credits >= 2 ? 'Ship + 1 [UPGRADE]' : '';
+        this.upgradeFiringRate.text = creditManager.credits >= 3 ? '+ Firing Rate [UPGRADE]' : '';
     }
 
     fireRateIncrement()
